@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import "./Login.css";
 import loginBackground from "../assets/login-background.mp4";
 import { useNavigate } from "react-router-dom";
-import { FaGithub } from "react-icons/fa";
-import { FaGoogle } from "react-icons/fa";
-import { FaFacebook } from "react-icons/fa";
+import { FaGithub, FaGoogle, FaFacebook } from "react-icons/fa";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginComponent = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
@@ -14,12 +15,72 @@ const LoginComponent = () => {
   const regexEmail = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (email.value && password.value) {
-      navigate("/Admin");
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    if (email && password) {
+      try {
+        axios
+          .post("http://localhost:5000/register", {
+            name: name.value,
+            email: email.value,
+            password: password.value,
+          })
+          .then((result) => {
+            console.log(result);
+            notifySuccess("Conta criada com sucesso! Faça login.");
+            setIsSignUpMode(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            notifyError(
+              "Erro ao criar conta. Verifique os dados e tente novamente."
+            );
+          });
+      } catch (error) {
+        console.error("Erro inesperado:", error);
+        notifyError("Erro inesperado. Tente novamente mais tarde.");
+      }
     } else {
-      setEmail({ ...email, dirty: true });
-      setPassword({ ...password, dirty: true });
+      notifyError("Por favor, preencha todos os campos.");
+    }
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    if (email && password) {
+      try {
+        axios
+          .post("http://localhost:5000/login", {
+            email: email.value,
+            password: password.value,
+          })
+          .then((result) => {
+            console.log(result);
+            if (result.data === "Success") {
+              navigate("/Admin");
+            } else if (result.data === "The password is incorrect") {
+              notifyError("Senha incorreta. Tente novamente.");
+            } else if (result.data === "No record existed") {
+              notifyError(
+                "Usuário não encontrado. Verifique o email e tente novamente."
+              );
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            notifyError("Erro ao tentar login. Tente novamente mais tarde.");
+          });
+      } catch (error) {
+        console.error("Erro inesperado:", error);
+        notifyError("Erro inesperado. Tente novamente mais tarde.");
+      }
+    } else {
+      notifyError("Por favor, preencha todos os campos.");
     }
   };
 
@@ -43,6 +104,7 @@ const LoginComponent = () => {
   const handleEmailChange = (e) => {
     setEmail({ value: e.target.value, dirty: true });
   };
+
   const handlePasswordChange = (e) => {
     setPassword({ value: e.target.value, dirty: true });
   };
@@ -66,7 +128,7 @@ const LoginComponent = () => {
           Seu navegador não suporta a tag de vídeo.
         </video>
         <div className="form-container sign-up-container">
-          <form action="#">
+          <form onSubmit={handleRegister}>
             <h1>Criar Conta</h1>
             <div className="social-container">
               <a href="#" className="social">
@@ -106,18 +168,12 @@ const LoginComponent = () => {
               placeholder="Senha"
             />
             {loginValidate(password)}
-            <button
-              onClick={() => {
-                setIsSignUpMode(true);
-              }}
-            >
-              Criar Conta
-            </button>
+            <button type="submit">Criar Conta</button>
           </form>
         </div>
 
         <div className="form-container sign-in-container">
-          <form action="#">
+          <form onSubmit={handleLogin}>
             <h1>Entrar</h1>
             <div className="social-container">
               <a href="#" className="social">
@@ -148,7 +204,7 @@ const LoginComponent = () => {
             />
             {loginValidate(password)}
             <a href="#">Esqueceu sua senha?</a>
-            <button onClick={() => handleLogin()}>Entrar</button>
+            <button type="submit">Entrar</button>
           </form>
         </div>
 
@@ -186,6 +242,7 @@ const LoginComponent = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

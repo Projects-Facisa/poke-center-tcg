@@ -32,17 +32,19 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
 
     try {
       // Buscar detalhes completos da carta pelo ID
-      const response = await fetch(`http://localhost:5000/fetch-card/${selectedCard.id}`);
+      const response = await fetch(
+        `http://localhost:5000/fetch-card/${selectedCard.id}`
+      );
       if (!response.ok) {
-        throw new Error('Erro ao buscar os detalhes da carta.');
+        throw new Error("Erro ao buscar os detalhes da carta.");
       }
       const cardDetails = await response.json();
 
       // Enviar os dados completos para o backend
-      const addCardResponse = await fetch('http://localhost:5000/add-card', {
-        method: 'POST',
+      const addCardResponse = await fetch("http://localhost:5000/add-card", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           id: cardDetails.id,
@@ -58,36 +60,40 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
       const result = await addCardResponse.json();
 
       if (!addCardResponse.ok) {
-        throw new Error(result.error || 'Erro ao adicionar a carta.');
+        throw new Error(result.error || "Erro ao adicionar a carta.");
       }
 
       console.log(result.message);
       handleClose();
     } catch (error) {
-      console.error('Erro ao adicionar carta:', error.message);
+      console.error("Erro ao adicionar carta:", error.message);
       setErrorMessage(error.message);
     }
   };
 
   const handleSearch = async (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       const searchInput = e.target.value.trim();
       setErrorMessage("");
       setCards([]);
 
       if (!searchInput) {
-        setErrorMessage('Por favor, digite um nome para pesquisar.');
+        setErrorMessage("Por favor, digite um nome para pesquisar.");
         return;
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/fetch-cards?name=${encodeURIComponent(searchInput)}`);
+        const response = await fetch(
+          `http://localhost:5000/fetch-cards?name=${encodeURIComponent(
+            searchInput
+          )}`
+        );
         if (!response.ok) {
-          throw new Error('Erro ao buscar as cartas.');
+          throw new Error("Erro ao buscar as cartas.");
         }
         const fetchedCards = await response.json();
         if (fetchedCards.length === 0) {
-          setErrorMessage('Nenhuma carta encontrada.');
+          setErrorMessage("Nenhuma carta encontrada.");
         } else {
           setCards(fetchedCards);
         }
@@ -143,7 +149,9 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
                   Fechar
                 </button>
               </div>
-              {errorMessage && <div className="error-message">{errorMessage}</div>}
+              {errorMessage && (
+                <div className="error-message">{errorMessage}</div>
+              )}
             </form>
           </div>
           <div className="cards-section">
@@ -151,11 +159,17 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
               {cards.map((card) => (
                 <div
                   key={card.id}
-                  className={`card ${selectedCard?.id === card.id ? 'selected' : ''}`}
+                  className={`card ${
+                    selectedCard?.id === card.id ? "selected" : ""
+                  }`}
                   onClick={() => handleCardClick(card)}
                 >
                   <img
-                    src={card.image ? `${card.image}/high.png` : '../src/assets/placeholder.png'}
+                    src={
+                      card.image
+                        ? `${card.image}/high.png`
+                        : "../src/assets/placeholder.png"
+                    }
                     alt={card.name}
                     className="card-image"
                   />
