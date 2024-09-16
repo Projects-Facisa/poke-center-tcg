@@ -12,13 +12,13 @@
 }
 
 .popup-content {
+  box-sizing: content-box;
   background: white;
-  padding: 20px;
+  padding: 40px;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 80vw;
-  min-height: 80vh;
-  display: flex;
+  max-height: 609px;
 }
 
 .popup-body {
@@ -27,13 +27,16 @@
 }
 
 .form-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 40%;
   padding-right: 20px;
   border-right: 1px solid #ccc;
-  overflow-y: auto;
 }
 
 .cards-section {
+  max-height: 575px;
   width: 60%;
   overflow-y: auto;
 }
@@ -77,10 +80,10 @@ button[type="button"] {
 
 .cards-container {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 15px;
   max-height: 80vh;
-  overflow-y: auto;
 }
 
 .card {
