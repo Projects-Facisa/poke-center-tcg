@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"vite\" \"nodemon server/app.js\"",
+    "dev:server": "nodemon server/app.js",
+    "dev:client": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
