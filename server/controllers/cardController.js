@@ -1,9 +1,6 @@
-// src/controllers/cardController.js
-
 import Card from "../models/Card.js";
 import * as tcgdexService from "../services/tcgdexService.js";
 
-// Obter todas as cartas
 export const getAllCards = async (req, res) => {
   try {
     const cards = await Card.find({}, "-__v");
@@ -13,7 +10,6 @@ export const getAllCards = async (req, res) => {
   }
 };
 
-// Obter uma carta pelo ID
 export const getCardById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -30,10 +26,10 @@ export const getCardById = async (req, res) => {
   }
 };
 
-// Adicionar uma nova carta
 export const addCard = async (req, res) => {
   try {
-    const { id, name, image, rarity, category, stock, price } = req.body;
+    const { id, name, image, rarity, category, stock, price, purchaseDate } =
+      req.body;
 
     if (
       !id ||
@@ -42,17 +38,17 @@ export const addCard = async (req, res) => {
       !rarity ||
       !category ||
       stock === undefined ||
-      price === undefined
+      price === undefined ||
+      !purchaseDate
     ) {
       return res.status(400).json({
         error:
-          "Todos os campos são necessários: id, nome, imagem, raridade, categoria, estoque e preço.",
+          "Todos os campos são necessários: id, nome, imagem, raridade, categoria, estoque, preço e data de compra.",
       });
     }
 
     const imageUrl = image.endsWith("/high.png") ? image : `${image}/high.png`;
 
-    // Verificar se a carta já existe
     const existingCard = await Card.findOne({ id });
     if (existingCard) {
       return res.status(400).json({ error: "Carta com este ID já existe." });
@@ -66,6 +62,7 @@ export const addCard = async (req, res) => {
       category,
       stock,
       price,
+      purchaseDate: new Date(),
     });
 
     await newCard.save();
@@ -76,7 +73,6 @@ export const addCard = async (req, res) => {
   }
 };
 
-// Atualizar o preço e o estoque de uma carta
 export const updateCard = async (req, res) => {
   try {
     const { id } = req.params;
@@ -104,7 +100,6 @@ export const updateCard = async (req, res) => {
   }
 };
 
-// Excluir uma carta pelo ID
 export const deleteCard = async (req, res) => {
   try {
     const { id } = req.params;
@@ -120,7 +115,6 @@ export const deleteCard = async (req, res) => {
   }
 };
 
-// Buscar cartas pelo nome na API TCGdex
 export const fetchCardsByName = async (req, res) => {
   const { name } = req.query;
 
@@ -153,7 +147,6 @@ export const fetchCardsByName = async (req, res) => {
   }
 };
 
-// Obter uma carta pelo ID na API TCGdex
 export const fetchCardById = async (req, res) => {
   const { id } = req.params;
 

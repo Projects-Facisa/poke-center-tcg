@@ -1,80 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./EditProductPopUp.css";
 
-const EditProductPopUp = ({
-  isOpen,
-  onClose,
-  getItems,
-  updateItem,
-  itemID,
-}) => {
-  const [productName, setProductName] = useState("");
+const EditProductPopUp = ({ isOpen, onClose, itemID, items, updateItem }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
-  const [oldItem, setOldItem] = useState({});
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (isOpen && itemID) {
+      const item = items.find((item) => item._id === itemID);
+      if (item) {
+        setProductQuantity(item.stock);
+        setProductPrice(item.price.toString());
+      }
+    }
+  }, [isOpen, itemID, items]);
 
   const handleClose = () => {
-    setProductName("");
     setProductQuantity(0);
     setProductPrice("");
+    setErrorMessage("");
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newItem = {
-      id: oldItem.id,
-      name: productName,
-      stockStatus:
-        productQuantity >= 10
-          ? "Disponível"
-          : productQuantity == 0
-          ? "Esgotado"
-          : "Poucas unidades",
-      quantity: productQuantity,
-      price: productPrice < oldItem.price ? oldItem.price : productPrice,
-      priceNew: productPrice,
-      purchaseDate: oldItem.purchaseDate,
-      hasDiscount: productPrice < oldItem.price,
-    };
-    updateItem(oldItem, newItem);
-    console.log("Produto Atualizado:", newItem);
-    handleClose();
-  };
 
-  useEffect(() => {
-    if (isOpen) {
-      const item = getItems().filter((item) => item.id === itemID)[0];
-      setOldItem(item);
-      setProductName(item.name);
-      setProductPrice(item.price);
-      setProductQuantity(item.quantity);
+    if (productQuantity < 0 || !productPrice) {
+      setErrorMessage("Por favor, preencha todos os campos corretamente.");
+      return;
     }
-  }, [isOpen]);
+
+    try {
+      const updatedData = {
+        stock: parseInt(productQuantity),
+        price: parseFloat(productPrice),
+      };
+
+      await updateItem(itemID, updatedData);
+      handleClose();
+    } catch (error) {
+      console.error("Erro ao atualizar produto:", error.message);
+      setErrorMessage(error.message);
+    }
+  };
 
   if (!isOpen) return null;
 
   return (
     <div className="popup-overlay">
       <div className="popup-content">
-        <h2>Registrar Produto</h2>
+        <h2>Editar Produto</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Nome do Produto:</label>
-            <input
-              type="text"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Estoque do Produto:</label>
+            <label>Quantidade em Estoque:</label>
             <input
               type="number"
               value={productQuantity}
-              onChange={(e) => setProductQuantity(e.target.value)}
+              onChange={(e) => setProductQuantity(Number(e.target.value))}
               required
+              min="0"
             />
           </div>
           <div className="form-group">
@@ -84,14 +69,17 @@ const EditProductPopUp = ({
               value={productPrice}
               onChange={(e) => setProductPrice(e.target.value)}
               required
+              min="0"
+              step="0.01"
             />
           </div>
           <div className="button-group">
-            <button type="submit">Registrar</button>
+            <button type="submit">Atualizar</button>
             <button type="button" onClick={handleClose}>
               Fechar
             </button>
           </div>
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
         </form>
       </div>
     </div>
