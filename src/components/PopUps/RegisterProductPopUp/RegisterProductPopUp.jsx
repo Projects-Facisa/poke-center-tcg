@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import "./RegisterProductPopUp.css";
 
-const RegisterProductPopUp = ({
-  isOpen,
-  onClose,
-  addItem,
-  getItems,
-  updateItem,
-  deleteItem,
-}) => {
-  const [productName, setProductName] = useState("");
+const RegisterProductPopUp = ({ isOpen, onClose }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
@@ -17,7 +9,6 @@ const RegisterProductPopUp = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleClose = () => {
-    setProductName("");
     setProductQuantity(0);
     setProductPrice("");
     setSelectedCard(null);
@@ -26,8 +17,9 @@ const RegisterProductPopUp = ({
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!selectedCard) {
       setErrorMessage("Por favor, selecione uma carta.");
       return;
@@ -38,29 +30,43 @@ const RegisterProductPopUp = ({
       return;
     }
 
-    const items = getItems();
-    const lastId = items.length ? items[items.length - 1].id : 0;
+    try {
+      // Buscar detalhes completos da carta pelo ID
+      const response = await fetch(`http://localhost:5000/fetch-card/${selectedCard.id}`);
+      if (!response.ok) {
+        throw new Error('Erro ao buscar os detalhes da carta.');
+      }
+      const cardDetails = await response.json();
 
-    const newProduct = {
-      id: lastId + 1,
-      name: selectedCard.name,
-      stockStatus: productQuantity >= 10
-        ? "Disponível"
-        : productQuantity === 0
-        ? "Esgotado"
-        : "Poucas unidades",
-      quantity: productQuantity,
-      price: productPrice,
-      priceNew: "",
-      purchaseDate: new Date().toLocaleDateString("pt-BR"),
-      hasDiscount: false,
-    };
+      // Enviar os dados completos para o backend
+      const addCardResponse = await fetch('http://localhost:5000/add-card', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: cardDetails.id,
+          name: cardDetails.name,
+          image: cardDetails.image,
+          rarity: cardDetails.rarity,
+          category: cardDetails.category,
+          stock: productQuantity,
+          price: productPrice,
+        }),
+      });
 
-    addItem(newProduct);
+      const result = await addCardResponse.json();
 
-    console.log("Produto Registrado:", newProduct);
+      if (!addCardResponse.ok) {
+        throw new Error(result.error || 'Erro ao adicionar a carta.');
+      }
 
-    handleClose();
+      console.log(result.message);
+      handleClose();
+    } catch (error) {
+      console.error('Erro ao adicionar carta:', error.message);
+      setErrorMessage(error.message);
+    }
   };
 
   const handleSearch = async (e) => {
@@ -114,7 +120,7 @@ const RegisterProductPopUp = ({
                 />
               </div>
               <div className="form-group">
-                <label>Estoque do Produto:</label>
+                <label>Quantidade em Estoque:</label>
                 <input
                   type="number"
                   value={productQuantity}
