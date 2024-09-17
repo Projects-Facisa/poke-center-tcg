@@ -26,7 +26,7 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
       return;
     }
 
-    if (productQuantity <= 0 || !productPrice) {
+    if (productQuantity < 0 || !productPrice) {
       setErrorMessage("Por favor, preencha todos os campos corretamente.");
       return;
     }
