@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { IoClose } from "react-icons/io5";
 import "./RegisterProductPopUp.css";
 
 const RegisterProductPopUp = ({ isOpen, onClose }) => {
@@ -112,7 +113,8 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
 
   return (
     <div className="popup-overlay">
-      <div className="popup-content">
+      <div className="popup-content register">
+        <IoClose className="x-close" onClick={handleClose} />
         <div className="popup-body">
           <div className="form-section">
             <h2>Registrar Produto</h2>
@@ -130,7 +132,6 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
                 <label>Quantidade em Estoque:</label>
                 <input
                   type="number"
-                  value={productQuantity}
                   onChange={(e) => setProductQuantity(Number(e.target.value))}
                   required
                 />
@@ -146,9 +147,6 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
               </div>
               <div className="button-group">
                 <button type="submit">Registrar</button>
-                <button type="button" onClick={handleClose}>
-                  Fechar
-                </button>
               </div>
               {errorMessage && (
                 <div className="error-message">{errorMessage}</div>

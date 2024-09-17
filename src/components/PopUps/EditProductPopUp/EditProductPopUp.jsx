@@ -49,7 +49,7 @@ const EditProductPopUp = ({ isOpen, onClose, itemID, items, updateItem }) => {
 
   return (
     <div className="popup-overlay">
-      <div className="popup-content">
+      <div className="popup-content edit">
         <h2>Editar Produto</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
