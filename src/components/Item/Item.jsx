@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Item.css";
-import { FiEdit3 } from "react-icons/fi";
-import { MdDeleteOutline } from "react-icons/md";
+import { IoIosMore } from "react-icons/io";
 import EditProductPopUp from "../PopUps/EditProductPopUp/EditProductPopUp.jsx";
 import DeletePopUp from "../PopUps/DeletePopUp/DeletePopUp.jsx";
 
@@ -10,9 +9,12 @@ function Item({ searchFilter = "" }) {
   const [popView, setPopView] = useState("");
   const [itemID, setItemID] = useState("");
   const [items, setItems] = useState([]);
+  const [openMenuId, setOpenMenuId] = useState(false);
 
   const openPopUp = () => setPopUpOpen(true);
   const closePopUp = () => setPopUpOpen(false);
+
+  let actionMenuRef = useRef();
 
   const handlePopUp = (itemID, pop) => {
     setPopView(pop);
@@ -22,7 +24,17 @@ function Item({ searchFilter = "" }) {
 
   useEffect(() => {
     fetchItems();
+
+    let handler = (e) =>{
+      if (!actionMenuRef.current.contains(e.target)){
+        setOpenMenuId(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
   }, []);
+
+
 
   const fetchItems = async () => {
     try {
@@ -81,6 +93,10 @@ function Item({ searchFilter = "" }) {
       : "baixo-estoque";
   };
 
+  const toggleMenu = (id) => {
+    setOpenMenuId(openMenuId === id ? null : id);
+  };
+
   return (
     <>
       {filteredItems.map((item) => (
@@ -102,19 +118,23 @@ function Item({ searchFilter = "" }) {
           <td>{"R$" + item.price.toFixed(2)}</td>
           <td>{new Date(item.purchaseDate).toLocaleDateString("pt-BR")}</td>
           <td>
-            <button
-              className="edit-btn"
-              onClick={() => handlePopUp(item._id, 1)}
-            >
-              <FiEdit3 />
-            </button>
-            <button
-              className="delete-btn"
-              onClick={() => handlePopUp(item._id, 2)}
-            >
-              <MdDeleteOutline />
-            </button>
+            <div className="action-menu" ref={actionMenuRef} >
+              <button className="action-btn"  onClick={() => toggleMenu(item._id)}>
+                <IoIosMore />
+              </button>
+              {openMenuId === item._id && (
+                <div className="action-dropdown" ref={actionMenuRef}>
+                  <button onClick={() => handlePopUp(item._id, 1)}>
+                    Edit
+                  </button>
+                  <button onClick={() => handlePopUp(item._id, 2)}>
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
           </td>
+
         </tr>
       ))}
       {popView === 1 ? (

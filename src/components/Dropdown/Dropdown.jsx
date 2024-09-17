@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import ProfileImageUploader from "../ProfileImageUploader/ProfileImageUploader";
 import { CiImageOn, CiLogout } from "react-icons/ci";
 import "./Dropdown.css";
@@ -8,6 +8,22 @@ const Dropdown = () => {
   const [imageProfile, SetimageProfile] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const fileInputRef = useRef(null);
+
+  let menuRef = useRef();
+
+  useEffect(() =>{
+    let handler = (e) =>{
+      if (!menuRef.current.contains(e.target)){
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+    return()=>{
+      document.removeEventListener("mousedown", handler)
+    }
+    
+  })
 
   const toggleDropdown = () => {
     if (!modalIsOpen) {
@@ -24,7 +40,7 @@ const Dropdown = () => {
   };
 
   return (
-    <div className="dropdown-container">
+    <div className="dropdown-container" ref={menuRef}>
       <div className="dropdown-trigger" onClick={toggleDropdown}>
         <ProfileImageUploader
           imageProfile={imageProfile}

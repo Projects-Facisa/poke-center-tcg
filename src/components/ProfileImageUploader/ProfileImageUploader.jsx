@@ -31,9 +31,11 @@ const customStyles = {
     padding: "20px",
     borderRadius: "8px",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+    
   },
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+    zIndex: 1
   },
 };
 

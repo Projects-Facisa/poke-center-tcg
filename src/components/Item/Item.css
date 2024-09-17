@@ -29,35 +29,45 @@
   color: #5d565f;
 }
 
-.edit-btn,
-.delete-btn {
-  padding: 6.5px 10px;
-  font-size: 16px;
+.action-menu {
+  position: relative;
+}
+
+.action-btn {
+  background: none;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
-  margin-right: 5px;
+  font-size: 20px;
+  color: #555;
+}
+
+.action-dropdown {
+  position: absolute;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.action-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
   transition: background-color 0.3s ease;
-  padding-bottom: 2px;
 }
 
-.edit-btn {
-  background-color: #9fba97;
-  color: #fff;
+.action-dropdown button:hover {
+  background-color: var(--lightgrey);
 }
 
-.edit-btn:hover {
-  background-color: #6dca50;
-}
 
-.delete-btn {
-  background-color: #c39e9e;
-  color: #fff;
-}
-
-.delete-btn:hover {
-  background-color: #d32f2f;
-}
 
 .item-table td {
   padding: 15px;
