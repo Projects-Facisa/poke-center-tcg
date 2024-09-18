@@ -87,9 +87,17 @@ button[type="submit"] {
   color: white;
 }
 
+button[type="submit"]:hover {
+  background-color: #16a01a;
+}
+
 button[type="button"] {
   background-color: #f44336;
   color: white;
+}
+
+button[type="button"]:hover {
+  background-color: #c51e12;
 }
 
 .cards-container {
@@ -133,11 +141,10 @@ button[type="button"] {
   cursor: pointer;
   font-size: 40px;
   color: #f44336;
-  border: 1px solid #f44336;
   border-radius: 50%;
 }
 
 .x-close:hover {
-  background-color: #f44336;
-  color: white;
+  background-color: #ffccc8;
+  color: #f44336;
 }
