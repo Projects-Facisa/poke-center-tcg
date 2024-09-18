@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { collection: "register" }
+  { collection: "users" }
 );
 
 const User = mongoose.model("User", userSchema);

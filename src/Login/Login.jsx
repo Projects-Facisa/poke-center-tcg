@@ -21,10 +21,10 @@ const LoginComponent = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
-    if (email && password) {
+    if (email && password && name) {
       try {
         axios
-          .post("http://localhost:5000/register", {
+          .post("http://localhost:5000/api/users/register", {
             name: name.value,
             email: email.value,
             password: password.value,
@@ -55,7 +55,7 @@ const LoginComponent = () => {
     if (email && password) {
       try {
         axios
-          .post("http://localhost:5000/login", {
+          .post("http://localhost:5000/api/users/login", {
             email: email.value,
             password: password.value,
           })
