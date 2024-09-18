@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import loginBackground from "../assets/login-background.mp4";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +32,7 @@ const LoginComponent = () => {
           .then((result) => {
             console.log(result);
             notifySuccess("Conta criada com sucesso! Faça login.");
+            resetFields();
             setIsSignUpMode(false);
           })
           .catch((err) => {
@@ -64,10 +65,10 @@ const LoginComponent = () => {
             if (result.data === "Success") {
               navigate("/Admin");
             } else if (result.data === "The password is incorrect") {
-              notifyError("Senha incorreta. Tente novamente.");
+              notifyError("Dados incorretos. Tente novamente.");
             } else if (result.data === "No record existed") {
               notifyError(
-                "Usuário não encontrado. Verifique o email e tente novamente."
+                "Dados incorretos. Tente novamente."
               );
             }
           })
@@ -145,6 +146,7 @@ const LoginComponent = () => {
             <input
               type="text"
               placeholder="Nome"
+              value={name.value}
               onChange={(e) => {
                 handleNameChange(e);
               }}
@@ -152,6 +154,7 @@ const LoginComponent = () => {
             {loginValidate(name)}
             <input
               type="email"
+              value={email.value}
               onChange={(e) => {
                 handleEmailChange(e);
               }}
@@ -160,6 +163,7 @@ const LoginComponent = () => {
             {loginValidate(email, "email")}
             <input
               type="password"
+              value={password.value}
               onChange={(e) => {
                 {
                   handlePasswordChange(e);
@@ -189,6 +193,7 @@ const LoginComponent = () => {
             <span>ou use sua conta</span>
             <input
               type="email"
+              value={email.value}
               onChange={(e) => {
                 handleEmailChange(e);
               }}
@@ -197,6 +202,7 @@ const LoginComponent = () => {
             {loginValidate(email, "email")}
             <input
               type="password"
+              value={password.value}
               onChange={(e) => {
                 handlePasswordChange(e);
               }}
@@ -220,7 +226,7 @@ const LoginComponent = () => {
                 className="ghost"
                 id="signIn"
                 onClick={() => {
-                  setIsSignUpMode(false), resetFields();
+                  setIsSignUpMode(false), resetFields()
                 }}
               >
                 Entrar
@@ -233,7 +239,7 @@ const LoginComponent = () => {
                 className="ghost"
                 id="signUp"
                 onClick={() => {
-                  setIsSignUpMode(true), resetFields();
+                  setIsSignUpMode(true), resetFields()
                 }}
               >
                 Criar Conta
