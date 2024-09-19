@@ -12,24 +12,20 @@
 }
 
 .popup-content {
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     background: white;
-    padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     width: 300px;
 }
 
-.form-group {
-    margin-bottom: 15px;
-}
-
 label {
     display: block;
-    margin-bottom: 5px;
+    
 }
 
 input {
