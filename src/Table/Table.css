@@ -68,7 +68,8 @@
     };
 }
 
-.item-table th {
+.item-table th,
+.item-table th span {
   background-color: white;
   padding: 15px;
   border-bottom: 1px solid #ddd;
@@ -77,6 +78,10 @@
   top: 0;
   z-index: 1;
   font-weight: 600;
+}
+
+.clickable-text {
+  cursor: pointer;
 }
 
 @media (max-width: 830px) {

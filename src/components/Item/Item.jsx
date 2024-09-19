@@ -4,7 +4,7 @@ import { IoIosMore } from "react-icons/io";
 import EditProductPopUp from "../PopUps/EditProductPopUp/EditProductPopUp.jsx";
 import DeletePopUp from "../PopUps/DeletePopUp/DeletePopUp.jsx";
 
-function Item({ searchFilter = "" }) {
+function Item({ searchFilter = "", sortBy, isAscending }) {
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const [popView, setPopView] = useState("");
   const [itemID, setItemID] = useState("");
@@ -80,6 +80,45 @@ function Item({ searchFilter = "" }) {
       console.error("Error deleting item:", error);
     }
   };
+
+  const sortByName = () => {
+    setItems([...items].sort((a, b) => (isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))));
+  };
+
+  const sortByCategory = () => {
+    setItems([...items].sort((a, b) => (isAscending ? a.category.localeCompare(b.category) : b.category.localeCompare(a.category))));
+  };
+
+  const sortByRarity = () => {
+    setItems([...items].sort((a, b) => (isAscending ? a.rarity.localeCompare(b.rarity) : b.rarity.localeCompare(a.rarity))));
+  };
+
+  const sortByQuantity = () => {
+    setItems([...items].sort((a, b) => (isAscending ? a.stock - b.stock : b.stock - a.stock)));
+  };
+
+  const sortByPrice = () => {
+    setItems([...items].sort((a, b) => (isAscending ? a.price - b.price : b.price - a.price)));
+  };
+
+  const sortByPurchaseDate = () => {
+    setItems([...items].sort((a, b) => {
+      const dateA = new Date(a.purchaseDate.split("/").reverse().join("-"));
+      const dateB = new Date(b.purchaseDate.split("/").reverse().join("-"));
+      return isAscending ? dateA - dateB : dateB - dateA;
+    }));
+  };
+
+  useEffect(() => {
+    if (sortBy === "name") sortByName();
+    if (sortBy === "category") sortByCategory();
+    if (sortBy === "rarity") sortByRarity();
+    if (sortBy === "quantity") sortByQuantity();
+    if (sortBy === "price") sortByPrice();
+    if (sortBy === "purchaseDate") sortByPurchaseDate();
+  }, [sortBy, isAscending]);
+
+
 
   const filteredItems = items.filter((item) =>
     item.name.toLowerCase().includes(searchFilter.toLowerCase())
