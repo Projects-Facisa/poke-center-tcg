@@ -108,7 +108,7 @@ input[type="number"]::-webkit-outer-spin-button {
 } /* Remove as setinhas de clicar */
 
 #search-input {
-  background-color: gray;
+  background-color: #e8f0fe;
 }
 
 button {
