@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 import loginBackground from "../assets/login-background.mp4";
 import { useNavigate } from "react-router-dom";
@@ -9,79 +9,94 @@ import "react-toastify/dist/ReactToastify.css";
 
 const LoginComponent = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState({ value: "", dirty: false });
+  const [email, setEmail] = useState({ value: "", dirty: false });
+  const [password, setPassword] = useState({ value: "", dirty: false });
   const regexEmail = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
   const navigate = useNavigate();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
-  const handleRegister = (e) => {
+  axios.defaults.withCredentials = true;
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/Admin", { withCredentials: true })
+      .then((response) => {
+        if (response.data.valid) {
+          navigate("/Admin", { replace: true });
+        }
+      })
+      .catch((error) => {
+        console.log("Usuário não autenticado. Permanecer na página de login.");
+      });
+  }, [navigate]);
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (email && password && name) {
-      try {
-        axios
-          .post("http://localhost:5000/api/users/register", {
-            name: name.value,
-            email: email.value,
-            password: password.value,
-          })
-          .then((result) => {
-            console.log(result);
-            notifySuccess("Conta criada com sucesso! Faça login.");
-            resetFields();
-            setIsSignUpMode(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            notifyError(
-              "Erro ao criar conta. Verifique os dados e tente novamente."
-            );
-          });
-      } catch (error) {
-        console.error("Erro inesperado:", error);
-        notifyError("Erro inesperado. Tente novamente mais tarde.");
+    if (
+      name.value.trim() === "" ||
+      email.value.trim() === "" ||
+      password.value.trim() === ""
+    ) {
+      notifyError("Por favor, preencha todos os campos corretamente.");
+      return;
+    }
+
+    try {
+      const result = await axios.post(
+        "http://localhost:5000/api/users/register",
+        {
+          name: name.value,
+          email: email.value,
+          password: password.value,
+        }
+      );
+      notifySuccess("Conta criada com sucesso! Faça login.");
+      resetFields();
+      setIsSignUpMode(false);
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.error) {
+        if (err.response.data.error === "Este e-mail já está registrado.") {
+          notifyError("Este e-mail já está registrado. Tente outro.");
+        } else {
+          notifyError(err.response.data.error);
+        }
+      } else {
+        notifyError(
+          "Erro ao criar conta. Verifique os dados e tente novamente."
+        );
       }
-    } else {
-      notifyError("Por favor, preencha todos os campos.");
     }
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (email && password) {
-      try {
-        axios
-          .post("http://localhost:5000/api/users/login", {
-            email: email.value,
-            password: password.value,
-          })
-          .then((result) => {
-            console.log(result);
-            if (result.data === "Success") {
-              navigate("/Admin");
-            } else if (result.data === "The password is incorrect") {
-              notifyError("Dados incorretos. Tente novamente.");
-            } else if (result.data === "No record existed") {
-              notifyError(
-                "Dados incorretos. Tente novamente."
-              );
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            notifyError("Erro ao tentar login. Tente novamente mais tarde.");
-          });
-      } catch (error) {
-        console.error("Erro inesperado:", error);
-        notifyError("Erro inesperado. Tente novamente mais tarde.");
-      }
-    } else {
+    if (email.value.trim() === "" || password.value.trim() === "") {
       notifyError("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    try {
+      const result = await axios.post("http://localhost:5000/api/users/login", {
+        email: email.value,
+        password: password.value,
+      });
+
+      const { login, image, name } = result.data;
+
+      if (login) {
+        notifySuccess("Login bem-sucedido!");
+        localStorage.setItem("username", name);
+        localStorage.setItem("profileImage", image);
+        navigate("/Admin", { replace: true });
+      } else {
+        notifyError("Dados incorretos. Tente novamente.");
+      }
+    } catch (err) {
+      notifyError("Dados incorretos. Tente novamente.");
     }
   };
 
@@ -226,7 +241,7 @@ const LoginComponent = () => {
                 className="ghost"
                 id="signIn"
                 onClick={() => {
-                  setIsSignUpMode(false), resetFields()
+                  setIsSignUpMode(false), resetFields();
                 }}
               >
                 Entrar
@@ -239,7 +254,7 @@ const LoginComponent = () => {
                 className="ghost"
                 id="signUp"
                 onClick={() => {
-                  setIsSignUpMode(true), resetFields()
+                  setIsSignUpMode(true), resetFields();
                 }}
               >
                 Criar Conta

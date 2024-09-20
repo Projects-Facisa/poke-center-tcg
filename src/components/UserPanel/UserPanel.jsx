@@ -1,6 +1,6 @@
 import "./UserPanel.css";
 import React, { useState, useEffect } from "react";
-import Dropdown from "../Dropdown/Dropdown.jsx"
+import Dropdown from "../Dropdown/Dropdown.jsx";
 
 function getDate() {
   const today = new Date();
@@ -32,7 +32,7 @@ function getTime() {
 function getGreeting() {
   const horaAtual = new Date().getHours();
   return horaAtual >= 5 && horaAtual < 12
-    ? "Bom dia!"
+    ? "Bom dia"
     : horaAtual >= 12 && horaAtual < 18
     ? "Boa tarde"
     : "Boa noite";
@@ -42,9 +42,14 @@ const UserPanel = () => {
   const [currentDate, setCurrentDate] = useState(getDate());
   const [currentTime, setCurrentTime] = useState(getTime());
   const [currentGreeting, setCurrentGreeting] = useState(getGreeting());
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     setCurrentGreeting(getGreeting());
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
   }, []);
 
   useEffect(() => {
@@ -52,20 +57,17 @@ const UserPanel = () => {
     return () => clearInterval(changeDate);
   }, []);
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(getTime()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div className="user-control">
       <div id="user-welcome">
-        <span id="welcome">{currentGreeting}, Usuário!</span>
+        <span id="welcome">
+          {currentGreeting}, {username || "Usuário"}!
+        </span>
         <span>{currentDate}</span>
       </div>
       <div className="user-info">
         <span id="hour">{currentTime}</span>
-        <Dropdown/>
+        <Dropdown />
       </div>
     </div>
   );

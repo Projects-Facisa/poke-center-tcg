@@ -11,6 +11,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../ProfileImageUploader/ProfileImageUploader.css";
 import setCanvasPreview from "./SetCanvasPreview";
+import axios from "axios";
 
 Modal.setAppElement("#root");
 
@@ -31,11 +32,10 @@ const customStyles = {
     padding: "20px",
     borderRadius: "8px",
     boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-    
   },
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
-    zIndex: 1
+    zIndex: 1,
   },
 };
 
@@ -97,14 +97,28 @@ const ProfileImageUploader = ({
     setCrop(centeredCrop);
   };
 
-  const handleConfirmCrop = () => {
-    SetimageProfile(
-      setCanvasPreview(
-        imgRef.current,
-        previewCanvasRef.current,
-        convertToPixelCrop(crop, imgRef.current.width, imgRef.current.height)
-      )
+  const handleConfirmCrop = async () => {
+    const base64Image = setCanvasPreview(
+      imgRef.current,
+      previewCanvasRef.current,
+      convertToPixelCrop(crop, imgRef.current.width, imgRef.current.height)
     );
+
+    SetimageProfile(base64Image);
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/users/updateProfileImage",
+        { image: base64Image },
+        { withCredentials: true }
+      );
+      console.log("Imagem atualizada com sucesso");
+    } catch (error) {
+      const base64Image = previewCanvasRef.current.toDataURL();
+      console.log(`Tamanho da imagem base64: ${base64Image.length} bytes`);
+      console.error("Erro ao atualizar a imagem:", error);
+    }
+
     handleCloseModal();
   };
 
