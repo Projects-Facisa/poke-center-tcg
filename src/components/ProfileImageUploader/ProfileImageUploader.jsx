@@ -112,6 +112,7 @@ const ProfileImageUploader = ({
         { image: base64Image },
         { withCredentials: true }
       );
+      localStorage.setItem("profileImage", base64Image);
       console.log("Imagem atualizada com sucesso");
     } catch (error) {
       const base64Image = previewCanvasRef.current.toDataURL();
