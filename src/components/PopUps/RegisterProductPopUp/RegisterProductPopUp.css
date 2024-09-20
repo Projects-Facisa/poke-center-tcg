@@ -12,7 +12,7 @@
 }
 
 .popup-content {
- position: relative;
+  position: relative;
 }
 
 .register {
@@ -23,7 +23,7 @@
   max-height: 88vh;
   min-height: 88vh;
   button[type="submit"] {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     margin: auto;
   }
@@ -68,7 +68,6 @@
       margin-top: auto;
     }
   }
-  
 }
 
 .cards-section {
@@ -79,13 +78,18 @@
 }
 
 h2 {
-  background: linear-gradient(to right, transparent 0%, #00000010 50%, transparent 100%);
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    #00000010 50%,
+    transparent 100%
+  );
   margin: 0 0 0px;
 }
 
 label {
   text-align: left;
-  
+
   margin-left: 15px;
 }
 
@@ -99,12 +103,12 @@ input {
 /* Remove as setinhas de clicar */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}/* Remove as setinhas de clicar */
+  -webkit-appearance: none;
+  margin: 0;
+} /* Remove as setinhas de clicar */
 
 #search-input {
-  background-color:#E8F0FE ;
+  background-color: gray;
 }
 
 button {
@@ -115,7 +119,7 @@ button {
 }
 
 button[type="submit"] {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
