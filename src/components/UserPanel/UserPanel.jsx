@@ -57,6 +57,11 @@ const UserPanel = () => {
     return () => clearInterval(changeDate);
   }, []);
 
+  useEffect(() =>{
+    const timer = setInterval(() => setCurrentTime(getTime()), 1000);
+    return () => clearInterval(timer);
+ }, []);
+
   return (
     <div className="user-control">
       <div id="user-welcome">

@@ -6,6 +6,7 @@ import { MdHome } from "react-icons/md";
 import "./Controller.css";
 import Table from "../Table/Table.jsx";
 import Dashboard from "../Dashboard/Dashboard.jsx";
+import ClientsView from "../ClientsView/ClientsView.jsx";
 
 function Controller() {
   const [view, setView] = useState(1);
@@ -47,6 +48,7 @@ function Controller() {
       <div id="content">
         {view === 1 ? <Dashboard /> : ""}
         {view === 2 ? <Table /> : ""}
+        {view === 3 ? <ClientsView /> : ""}
       </div>
     </div>
   );
