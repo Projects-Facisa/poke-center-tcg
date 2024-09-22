@@ -26,6 +26,18 @@ export const getCardById = async (req, res) => {
   }
 };
 
+export const getCardByName = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const cards = await Card.find({name: { $regex: name, $options: 'i' }})
+    res.status(200).json(cards);
+  }
+  catch (error) {
+    console.error("Erro ao buscar carta:", error.message);
+    res.status(500).json({ error: "Erro ao buscar a carta." });
+  }
+}
+
 export const addCard = async (req, res) => {
   try {
     const { id, name, image, rarity, category, stock, price, purchaseDate } =
