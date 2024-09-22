@@ -1,0 +1,146 @@
+.container-grid{
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    gap: 15px;
+}
+
+.client-grid {
+    width: 100%;
+}
+
+.newclient-grid{
+    width: 100%;
+    display: grid;
+    grid-template-rows: 115px auto;
+}
+
+.newclient {
+    display: flex;
+    justify-content: center;
+}
+
+.newclient-grid button {
+    width: 70%;
+    align-self: center;
+    background-color: rgb(49, 194, 49);
+}
+
+.client-grid-header{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.client-grid-body{
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
+    overflow: hidden;
+    overflow-y: scroll;
+    border-radius: 10px;
+        & table {
+        width: 100%;
+        border-collapse: collapse;
+        };
+}
+
+.client-grid-body th{
+    background-color: white;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: 600;
+}
+
+.client-grid-body th span{
+    color: #333;
+    font-weight: 600;
+}
+
+.client-grid table td {
+    height: 40px;
+    padding: 5px;
+    text-align: center;
+    color: #555;
+}
+
+.infos-box {
+    background-color: white;
+    padding: 13px;
+    border-radius: 15px;
+    border: 1px solid rgba(0,0,0,.125);
+    display: flex;
+    justify-content: space-between;
+    & .icon {
+        font-size: 40pt;
+    }
+    & span {
+        font-size: 25pt;
+        text-align: start;
+        font-weight: 800;
+    }
+    & h4 {
+        color: #555;
+        font-size: 10pt;
+    }
+}
+
+.panel-top5 {
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.panel-top5 h3{
+    padding: 5px 0;
+    text-align: center;
+    font-size: 18pt;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.panel-top5 ul {
+    list-style-type: none;
+    width: 100%;
+    padding: 15px;
+}
+
+.panel-top5 ul li{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    padding: 6px;
+    & .purchaseCount {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.panel-top5 .li-header{
+    padding: 2px;
+}
+
+.client-grid-body {
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
+    height: 65.5vh;
+    overflow: hidden;
+    overflow-y: scroll;
+        & table {
+        width: 100%;
+        border-collapse: collapse;
+        };
+}
+
+.client-grid-body th{
+    background-color: white;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: 600;
+}
