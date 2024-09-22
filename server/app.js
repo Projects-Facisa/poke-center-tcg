@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/database.js";
 import cardRoutes from "./routes/cardRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import promotionRoutes from "./routes/promotionRoutes.js";
 import cookieParser from "cookie-parser";
 import { verifyUser } from "./middleware/authMiddleware.js";
 dotenv.config();
@@ -28,7 +29,8 @@ app.get("/Admin", verifyUser, (req, res) => {
 connectDB();
 
 app.use("/api/users", authRoutes);
-app.use(cardRoutes);
+app.use("/cards", cardRoutes);
+app.use("/promotions", promotionRoutes);
 
 app.listen(portApi, () => {
   console.log(`API Server rodando na porta ${portApi}`);

@@ -6,6 +6,8 @@ import { MdHome } from "react-icons/md";
 import "./Controller.css";
 import Table from "../Table/Table.jsx";
 import Dashboard from "../Dashboard/Dashboard.jsx";
+import Promotion from "../Promotion/Promotion.jsx";
+import {RiDiscountPercentFill} from "react-icons/ri";
 
 function Controller() {
   const [view, setView] = useState(1);
@@ -29,7 +31,7 @@ function Controller() {
           onClick={() => setView(3)}
           className={view === 3 ? "active" : ""}
         >
-          <IoIosRadioButtonOn />
+          <RiDiscountPercentFill />
         </button>
         <button
           onClick={() => setView(4)}
@@ -47,6 +49,7 @@ function Controller() {
       <div id="content">
         {view === 1 ? <Dashboard /> : ""}
         {view === 2 ? <Table /> : ""}
+        {view === 3 ? <Promotion/> : ""}
       </div>
     </div>
   );

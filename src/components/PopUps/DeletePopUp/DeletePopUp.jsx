@@ -4,7 +4,6 @@ import "./DeletePopUp.css";
 const RegisterProductPopUp = ({
   isOpen,
   onClose,
-  getItems,
   deleteItem,
   itemID,
 }) => {
@@ -14,9 +13,8 @@ const RegisterProductPopUp = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const index = getItems().findIndex((item) => item.id === itemID);
-    deleteItem(index);
-    console.log("Produto Deletado:", index);
+    deleteItem(itemID);
+    console.log("Produto Deletado");
     handleClose();
   };
 
