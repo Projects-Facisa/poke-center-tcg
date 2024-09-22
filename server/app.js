@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/database.js";
 import cardRoutes from "./routes/cardRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import clientRoutes from "./routes/clientRoutes.js"
 import promotionRoutes from "./routes/promotionRoutes.js";
 import cookieParser from "cookie-parser";
 import { verifyUser } from "./middleware/authMiddleware.js";
@@ -31,6 +32,7 @@ connectDB();
 app.use("/api/users", authRoutes);
 app.use("/cards", cardRoutes);
 app.use("/promotions", promotionRoutes);
+app.use(clientRoutes);
 
 app.listen(portApi, () => {
   console.log(`API Server rodando na porta ${portApi}`);

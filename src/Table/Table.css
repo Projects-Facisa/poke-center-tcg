@@ -68,8 +68,7 @@
     };
 }
 
-.item-table th,
-.item-table th span {
+.item-table th{
   background-color: white;
   padding: 15px;
   border-bottom: 1px solid #ddd;
@@ -77,6 +76,11 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  font-weight: 600;
+}
+
+.item-table th span{
+  color: #333;
   font-weight: 600;
 }
 
