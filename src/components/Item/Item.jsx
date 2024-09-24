@@ -4,7 +4,7 @@ import { IoIosMore } from "react-icons/io";
 import EditProductPopUp from "../PopUps/EditProductPopUp/EditProductPopUp.jsx";
 import DeletePopUp from "../PopUps/DeletePopUp/DeletePopUp.jsx";
 
-function Item({ searchFilter = "", sortBy, isAscending }) {
+function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const [popView, setPopView] = useState("");
   const [itemID, setItemID] = useState("");
@@ -32,7 +32,7 @@ function Item({ searchFilter = "", sortBy, isAscending }) {
     };
 
     document.addEventListener("mousedown", handler);
-  }, []);
+  }, [refreshTrigger]);
 
 
 

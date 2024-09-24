@@ -11,6 +11,7 @@ function Table() {
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const [sortBy, setSortBy] = useState("purchaseDate");
   const [isAscending, setIsAscending] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const openPopUp = () => setPopUpOpen(true);
   const closePopUp = () => setPopUpOpen(false);
@@ -29,6 +30,10 @@ function Table() {
       return isAscending ? <IoMdArrowUp  /> : <IoMdArrowDown  />;
     }
     return null;
+  };
+
+  const refreshTable = () => {
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   return (
@@ -94,10 +99,10 @@ function Table() {
             </tr>
           </thead>
           <tbody>
-            <Item searchFilter={search} sortBy={sortBy} isAscending={isAscending} />
+            <Item searchFilter={search} sortBy={sortBy} isAscending={isAscending} refreshTrigger={refreshTrigger} />
           </tbody>
         </table>
-        <RegisterProductPopUp isOpen={isPopUpOpen} onClose={closePopUp} />
+        <RegisterProductPopUp isOpen={isPopUpOpen} onClose={closePopUp} onProductAdded={refreshTable} />
       </div>
     </Container>
   );

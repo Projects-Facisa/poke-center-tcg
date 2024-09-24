@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import "./RegisterProductPopUp.css";
 
-const RegisterProductPopUp = ({ isOpen, onClose }) => {
+const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
@@ -69,6 +69,7 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
       }
 
       console.log(result.message);
+      onProductAdded();
       handleClose();
     } catch (error) {
       console.error("Erro ao adicionar carta:", error.message);
