@@ -189,8 +189,8 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
             <div className="cards-container">
               {cards.length === 0 ? (
                 /*If Ternário ===>>> PlaceHolder*/
-                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map(() => (
-                  <div className="card placeholder">
+                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map((_, index) => (
+                  <div key={index} className="card placeholder">
                     <img
                       src="../src/assets/placeholder.png"
                       alt="placeholder"

@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.get("/api/clients", getAllClients);
 router.get("/api/clients/:code", getOneClient);
-router.post("/api/clients", addClient);
+router.post("/add-client", addClient);
 
 export default router;

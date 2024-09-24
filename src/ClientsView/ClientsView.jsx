@@ -2,27 +2,36 @@ import React, { useState, useEffect } from "react";
 import Container from "../components/Container/Container.jsx";
 import "./ClientsView.css";
 import axios from "axios";
-import { IoIosMore} from "react-icons/io";
+import { IoIosMore } from "react-icons/io";
 import { FaUserCheck } from "react-icons/fa6";
 import { SiVerizon } from "react-icons/si";
 import { MdShoppingCart } from "react-icons/md";
 
+import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/RegisterClientPopUp.jsx";
+
 function ViewUsers() {
   const [clients, setClients] = useState([]);
+  const [isPopUpOpen, setPopUpOpen] = useState(false);
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/api/clients')
-      .then(response => {
-        if (Array.isArray(response.data.content)) { 
-          setClients(response.data.content);
-        } else {
-          setClients([]); 
-        }
-      })
-      .catch(error => {
-        console.error("Erro ao buscar os clientes:", error);
+  const openPopUp = () => setPopUpOpen(true);
+  const closePopUp = () => setPopUpOpen(false);
+
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/clients');
+      if (Array.isArray(response.data.content)) {
+        setClients(response.data.content);
+      } else {
         setClients([]);
-      });
+      }
+    } catch (error) {
+      console.error("Erro ao buscar os clientes:", error);
+      setClients([]);
+    }
+  };
+
+    useEffect(() => {
+      fetchClients();
   }, []);
 
   const calcTotalPurchases = (clients) => {
@@ -44,7 +53,11 @@ function ViewUsers() {
     }
     return age;
   };
-  
+
+  const refreshTable = () => {
+      fetchClients();
+  };
+
   return (
     <Container>
       <div className="userview-header">
@@ -101,7 +114,7 @@ function ViewUsers() {
               </thead>
               <tbody>
                 {clients.map((client) => (
-                  <tr>
+                  <tr key={client.code}>
                     <td>{client.code}</td>
                     <td>{client.name}</td>
                     <td>{calcAge(client.born)}</td>
@@ -122,7 +135,7 @@ function ViewUsers() {
         </div>
         <div className="newclient-grid">
           <div className="newclient">
-            <button>CADASTRAR NOVO CLIENTE</button>
+            <button onClick={openPopUp}>CADASTRAR NOVO CLIENTE</button>
           </div>
           <div className="panel-top5">
             <h3>RANKING DE COMPRAS</h3>
@@ -133,7 +146,7 @@ function ViewUsers() {
                 <div className="purchaseCount">Compras</div>
               </li>
               {clients.map((client) => (
-                <li>
+                <li key={client.code}>
                   <div className="code">{client.code}</div>
                   <div className="name">{client.name}</div>
                   <div className="purchaseCount">{client.purchaseCount}</div>
@@ -142,6 +155,7 @@ function ViewUsers() {
             </ul>
           </div>
         </div>
+        <RegisterClientPopUp isOpen={isPopUpOpen} onClose={closePopUp} onClientAdded={refreshTable} />
       </div>
     </Container>
   );
