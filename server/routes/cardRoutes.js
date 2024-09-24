@@ -5,14 +5,10 @@ import {
   addCard,
   updateCard,
   deleteCard,
-  fetchCardsByName,
-  fetchCardById, getCardByName,
+  getCardByName,
 } from "../controllers/cardController.js";
 
 const router = express.Router();
-
-router.get("/fetch-cards", fetchCardsByName);
-router.get("/fetch-card/:id", fetchCardById);
 
 router.get("/", getAllCards);
 router.get("/:id", getCardById);

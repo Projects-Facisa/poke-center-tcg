@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/database.js";
+import tcgdexRoutes from "./routes/tcgdexRoutes.js"
 import cardRoutes from "./routes/cardRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import clientRoutes from "./routes/clientRoutes.js"
@@ -30,7 +31,8 @@ app.get("/Admin", verifyUser, (req, res) => {
 connectDB();
 
 app.use("/api/users", authRoutes);
-app.use("/cards", cardRoutes);
+app.use(tcgdexRoutes);
+app.use(cardRoutes);
 app.use("/promotions", promotionRoutes);
 app.use(clientRoutes);
 
