@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./DeletePopUp.css";
 
-const DeletePopUp = ({isOpen,onClose,deleteClient,itemID,}) => {
+const DeletePopUp = ({isOpen,onClose,deleteObject,itemID,}) => {
 
   const handleClose = () => {
     onClose();
@@ -9,8 +9,8 @@ const DeletePopUp = ({isOpen,onClose,deleteClient,itemID,}) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    deleteClient(itemID);
-    console.log("Produto Deletado");
+    deleteObject(itemID);
+    console.log("Objeto Deletado");
     handleClose();
   };
 

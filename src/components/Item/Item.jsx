@@ -189,7 +189,7 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
         <DeletePopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
-          deleteItem={deleteItem}
+          deleteObject={deleteItem}
           itemID={itemID}
         />
       ) : null}

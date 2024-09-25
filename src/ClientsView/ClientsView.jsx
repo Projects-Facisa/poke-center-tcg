@@ -7,6 +7,7 @@ import { FaUserCheck } from "react-icons/fa6";
 import { SiVerizon } from "react-icons/si";
 import { MdShoppingCart } from "react-icons/md";
 
+import EditClientPopUp from "../components/PopUps/EditClientPopUp/EditClientPopUp.jsx";
 import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/RegisterClientPopUp.jsx";
 import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
 
@@ -18,7 +19,7 @@ function ViewUsers(refreshTrigger) {
   const [isAscending, setIsAscending] = useState(true);
 
   const [popView, setPopView] = useState("");
-  const [itemID, setItemID] = useState("");
+  const [clientID, setClientID] = useState("");
 
   const [openMenuId, setOpenMenuId] = useState(false);
 
@@ -36,9 +37,9 @@ function ViewUsers(refreshTrigger) {
     document.addEventListener("mousedown", handler);
   }, [refreshTrigger]);
 
-  const handlePopUp = (itemID, pop) => {
+  const handlePopUp = (clientID, pop) => {
     setPopView(pop);
-    setItemID(itemID);
+    setClientID(clientID);
     openPopUp();
   };
 
@@ -134,6 +135,25 @@ function ViewUsers(refreshTrigger) {
   
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
+  };
+
+
+  const updateClient = async (id, updatedData) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/update/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update Client");
+      }
+      fetchClient();
+    } catch (error) {
+      console.error("Error updating Client:", error);
+    }
   };
 
   const deleteClient = async (id) => {
@@ -266,20 +286,20 @@ function ViewUsers(refreshTrigger) {
         <RegisterClientPopUp isOpen={isPopUpOpen && popView === ""} onClose={closePopUp} onClientAdded={refreshTable} />
       </div>
       {popView === 1 ? (
-        <EditProductPopUp
+        <EditClientPopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
-          updateItem={updateItem}
-          itemID={itemID}
-          items={items}
+          updateClient={updateClient}
+          clients={clients}
+          clientID={clientID}
         />
       ) : null}
       {popView === 2 ? (
         <DeletePopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
-          deleteClient={deleteClient}
-          itemID={itemID}
+          deleteObject={deleteClient}
+          itemID={clientID}
         />
       ) : null}
     </Container>
