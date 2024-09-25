@@ -9,6 +9,8 @@ import clientRoutes from "./routes/clientRoutes.js"
 import promotionRoutes from "./routes/promotionRoutes.js";
 import cookieParser from "cookie-parser";
 import { verifyUser } from "./middleware/authMiddleware.js";
+import dashboardRoutes from './routes/dashboardRoutes.js';
+
 dotenv.config();
 
 const app = express();
@@ -35,6 +37,7 @@ app.use(tcgdexRoutes);
 app.use("/cards",cardRoutes);
 app.use("/promotions", promotionRoutes);
 app.use(clientRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 app.listen(portApi, () => {
   console.log(`API Server rodando na porta ${portApi}`);
