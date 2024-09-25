@@ -45,7 +45,7 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
       const cardDetails = await response.json();
 
       // Enviar os dados completos para o backend
-      const addCardResponse = await fetch("http://localhost:5000/add-card", {
+      const addCardResponse = await fetch("http://localhost:5000/cards/add-card", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

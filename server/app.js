@@ -32,7 +32,7 @@ connectDB();
 
 app.use("/api/users", authRoutes);
 app.use(tcgdexRoutes);
-app.use(cardRoutes);
+app.use("/cards",cardRoutes);
 app.use("/promotions", promotionRoutes);
 app.use(clientRoutes);
 

@@ -38,7 +38,7 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch("http://localhost:5000/");
+      const response = await fetch("http://localhost:5000/cards");
       if (!response.ok) {
         throw new Error("Failed to fetch items");
       }
@@ -51,7 +51,7 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
 
   const updateItem = async (id, updatedData) => {
     try {
-      const response = await fetch(`http://localhost:5000/${id}`, {
+      const response = await fetch(`http://localhost:5000/cards/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
 
   const deleteItem = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/${id}`, {
+      const response = await fetch(`http://localhost:5000/cards/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
