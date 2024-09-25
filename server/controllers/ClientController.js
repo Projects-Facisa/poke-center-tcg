@@ -61,3 +61,18 @@ export const addClient = async (req, res) => {
 export const updateClient = async (req, res) => {
     
 }
+
+export const deleteClient = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deletedClient = await Client.findByIdAndDelete(id);
+  
+      if (!deletedClient) {
+        return res.status(404).json({ error: "Cliente não encontrado" });
+      }
+  
+      res.status(200).json({ message: "Cliente excluído com sucesso" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Container from "../components/Container/Container.jsx";
 import "./ClientsView.css";
 import axios from "axios";
@@ -8,13 +8,39 @@ import { SiVerizon } from "react-icons/si";
 import { MdShoppingCart } from "react-icons/md";
 
 import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/RegisterClientPopUp.jsx";
+import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
 
-function ViewUsers() {
+function ViewUsers(refreshTrigger) {
   const [clients, setClients] = useState([]);
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const [topClients, setTopClients] = useState([]);
   const [sortBy, setSortBy] = useState("code");
   const [isAscending, setIsAscending] = useState(true);
+
+  const [popView, setPopView] = useState("");
+  const [itemID, setItemID] = useState("");
+
+  const [openMenuId, setOpenMenuId] = useState(false);
+
+  let actionMenuRef = useRef();
+
+  useEffect(() => {
+    fetchClients();
+
+    let handler = (e) =>{
+      if (!actionMenuRef.current.contains(e.target)){
+        setOpenMenuId(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+  }, [refreshTrigger]);
+
+  const handlePopUp = (itemID, pop) => {
+    setPopView(pop);
+    setItemID(itemID);
+    openPopUp();
+  };
 
   const getTopClients = (clients) => {
     return clients
@@ -106,6 +132,24 @@ function ViewUsers() {
     }
   });
   
+  const toggleMenu = (id) => {
+    setOpenMenuId(openMenuId === id ? null : id);
+  };
+
+  const deleteClient = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/clients/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete client");
+      }
+      fetchClients();
+    } catch (error) {
+      console.error("Error deleting client:", error);
+    }
+  };
+
   return (
     <Container>
       <div className="userview-header">
@@ -179,11 +223,17 @@ function ViewUsers() {
                     <td>{client.email}</td>
                     <td>{client.purchaseCount > 0 ? client.purchaseCount : 0}</td>
                     <td>
-                      <div>
-                        <button>
-                          <IoIosMore />
-                        </button>
-                      </div>
+                    <div className="action-menu" ref={actionMenuRef} >
+                      <button className="action-btn"  onClick={() => toggleMenu(client._id)}>
+                        <IoIosMore />
+                      </button>
+                      {openMenuId === client._id && (
+                        <div className="action-dropdown" ref={actionMenuRef}>
+                          <button onClick={() => handlePopUp(client._id, 1)}> Edit </button>
+                          <button onClick={() => handlePopUp(client._id, 2)}> Delete </button>
+                        </div>
+                      )}
+                    </div>
                     </td>
                   </tr>
                 ))}
@@ -213,8 +263,25 @@ function ViewUsers() {
             </ul>
           </div>
         </div>
-        <RegisterClientPopUp isOpen={isPopUpOpen} onClose={closePopUp} onClientAdded={refreshTable} />
+        <RegisterClientPopUp isOpen={isPopUpOpen && popView === ""} onClose={closePopUp} onClientAdded={refreshTable} />
       </div>
+      {popView === 1 ? (
+        <EditProductPopUp
+          isOpen={isPopUpOpen}
+          onClose={closePopUp}
+          updateItem={updateItem}
+          itemID={itemID}
+          items={items}
+        />
+      ) : null}
+      {popView === 2 ? (
+        <DeletePopUp
+          isOpen={isPopUpOpen}
+          onClose={closePopUp}
+          deleteClient={deleteClient}
+          itemID={itemID}
+        />
+      ) : null}
     </Container>
   );
 }
