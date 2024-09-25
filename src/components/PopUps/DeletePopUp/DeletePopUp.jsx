@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import "./DeletePopUp.css";
 
-const RegisterProductPopUp = ({
-  isOpen,
-  onClose,
-  deleteItem,
-  itemID,
-}) => {
+const DeletePopUp = ({isOpen,onClose,deleteObject,itemID,}) => {
+
   const handleClose = () => {
     onClose();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    deleteItem(itemID);
-    console.log("Produto Deletado");
+    deleteObject(itemID);
+    console.log("Objeto Deletado");
     handleClose();
   };
 
@@ -37,4 +33,4 @@ const RegisterProductPopUp = ({
   );
 };
 
-export default RegisterProductPopUp;
+export default DeletePopUp;

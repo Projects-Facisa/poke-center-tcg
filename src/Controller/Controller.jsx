@@ -9,6 +9,7 @@ import Dashboard from "../Dashboard/Dashboard.jsx";
 import Promotion from "../Promotion/Promotion.jsx";
 import {RiDiscountPercentFill} from "react-icons/ri";
 import ClientsView from "../ClientsView/ClientsView.jsx";
+import { FaUserGear, FaUserGroup } from "react-icons/fa6";
 
 function Controller() {
   const [view, setView] = useState(1);
@@ -32,26 +33,26 @@ function Controller() {
           onClick={() => setView(3)}
           className={view === 3 ? "active" : ""}
         >
-            <IoIosRadioButtonOn />
+        <RiDiscountPercentFill />
         </button>
         <button
           onClick={() => setView(4)}
           className={view === 4 ? "active" : ""}
         >
-            <RiDiscountPercentFill />
+            <FaUserGroup />
         </button>
         <button
           onClick={() => setView(5)}
           className={view === 5 ? "active" : ""}
         >
-          <PiTrashFill />
+          <FaUserGear />
         </button>
       </div>
       <div id="content">
         {view === 1 ? <Dashboard /> : ""}
         {view === 2 ? <Table /> : ""}
-        {view === 3 ? <ClientsView /> : ""}
-        {view === 4 ? <Promotion/> : ""}
+        {view === 3 ? <Promotion /> : ""}
+        {view === 4 ? <ClientsView/> : ""}
       </div>
     </div>
   );
