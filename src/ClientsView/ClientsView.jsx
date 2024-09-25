@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Container from "../components/Container/Container.jsx";
 import "./ClientsView.css";
 import axios from "axios";
-import { IoIosMore } from "react-icons/io";
+import { IoIosMore, IoMdArrowDown, IoMdArrowUp} from "react-icons/io";
 import { FaUserCheck } from "react-icons/fa6";
 import { SiVerizon } from "react-icons/si";
 import { MdShoppingCart } from "react-icons/md";
@@ -12,6 +12,27 @@ import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/Regist
 function ViewUsers() {
   const [clients, setClients] = useState([]);
   const [isPopUpOpen, setPopUpOpen] = useState(false);
+  const [topClients, setTopClients] = useState([]);
+  const [sortBy, setSortBy] = useState("code");
+  const [isAscending, setIsAscending] = useState(true);
+
+  const getTopClients = (clients) => {
+    return clients
+      .filter(
+        (client) => 
+          client &&
+          client.purchaseCount !== null && 
+          client.purchaseCount !== undefined && 
+          client.purchaseCount > 0
+      )
+      .sort((a, b) => b.purchaseCount - a.purchaseCount)
+      .slice(0, 5);
+  };
+
+  useEffect(() => {
+    const topFiveClients = getTopClients(clients);
+    setTopClients(topFiveClients);
+  }, [clients]);
 
   const openPopUp = () => setPopUpOpen(true);
   const closePopUp = () => setPopUpOpen(false);
@@ -58,6 +79,33 @@ function ViewUsers() {
       fetchClients();
   };
 
+  const handleSort = (column) => {
+    if (sortBy === column) {
+      setIsAscending(!isAscending);
+    } else {
+      setSortBy(column);
+      setIsAscending(true);
+    }
+  };
+
+  const renderSortIcon = (column) => {
+    if (sortBy === column) {
+      return isAscending ? <IoMdArrowUp /> : <IoMdArrowDown />;
+    }
+    return null;
+  };
+
+  const sortedClients = clients.sort((a, b) => {
+    const aValue = a[sortBy] || "";
+    const bValue = b[sortBy] || "";
+
+    if (isAscending) {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+  
   return (
     <Container>
       <div className="userview-header">
@@ -76,7 +124,7 @@ function ViewUsers() {
             <div className="infos-box">
               <div className="info">
                 <h4>Clientes ativos</h4>
-                <span>{clients.filter((client) => client.isActive).length}</span>
+                <span>{clients.filter((client) => client.purchaseCount).length}</span>
               </div>
               <div className="icon ativo"><SiVerizon /></div>
             </div>
@@ -92,20 +140,30 @@ function ViewUsers() {
             <table>
               <thead>
                 <tr>
-                  <th>
-                    <span>code</span>
+                <th>
+                    <span onClick={() => handleSort("code")} className="clickable-text">
+                      Code {renderSortIcon("code")}
+                    </span>
                   </th>
                   <th>
-                    <span>nome</span>
+                    <span onClick={() => handleSort("name")} className="clickable-text">
+                      Nome {renderSortIcon("name")}
+                    </span>
                   </th>
                   <th>
-                    <span>Idade</span>
+                    <span onClick={() => handleSort("born")} className="clickable-text">
+                      Idade {renderSortIcon("born")}
+                    </span>
                   </th>
                   <th>
-                    <span>email</span>
+                    <span>
+                      Email
+                    </span>
                   </th>
                   <th>
-                    <span>compras</span>
+                    <span onClick={() => handleSort("purchaseCount")} className="clickable-text">
+                      Compras {renderSortIcon("purchaseCount")}
+                    </span>
                   </th>
                   <th>
                     <span>ação</span>
@@ -113,13 +171,13 @@ function ViewUsers() {
                 </tr>
               </thead>
               <tbody>
-                {clients.map((client) => (
-                  <tr key={client.code}>
+                {sortedClients.map((client) => (
+                  <tr>
                     <td>{client.code}</td>
                     <td>{client.name}</td>
                     <td>{calcAge(client.born)}</td>
                     <td>{client.email}</td>
-                    <td>{client.purchaseCount}</td>
+                    <td>{client.purchaseCount > 0 ? client.purchaseCount : 0}</td>
                     <td>
                       <div>
                         <button>
@@ -145,8 +203,8 @@ function ViewUsers() {
                 <div>Nome</div>
                 <div className="purchaseCount">Compras</div>
               </li>
-              {clients.map((client) => (
-                <li key={client.code}>
+              {topClients.map((client) => (
+                <li>
                   <div className="code">{client.code}</div>
                   <div className="name">{client.name}</div>
                   <div className="purchaseCount">{client.purchaseCount}</div>
