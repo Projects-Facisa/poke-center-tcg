@@ -9,10 +9,19 @@ const Dropdown = () => {
   const [open, setOpen] = useState(false);
   const [imageProfile, SetimageProfile] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [username, setUsername] = useState("");
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   let menuRef = useRef();
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
 
   useEffect(() => {
     let handler = (e) => {
@@ -74,9 +83,7 @@ const Dropdown = () => {
 
       <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
         <h3>
-          Teste
-          <br />
-          <span>Teste</span>
+          {username || "Usuário"}
         </h3>
         <ul>
           <li className="dropdown-item">
