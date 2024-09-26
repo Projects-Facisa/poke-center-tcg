@@ -83,7 +83,7 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
 
 
     const filteredItems = items.filter((item) =>
-        item.Card.name.toLowerCase().includes(searchFilter.toLowerCase())
+        item.Card ? item.Card.name.toLowerCase().includes(searchFilter.toLowerCase()) : "sem carta"
     );
 
     const toggleMenu = (id) => {
@@ -94,7 +94,7 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
         <>
             {filteredItems.map((item) => (
                 <tr key={item._id}>
-                    <td>{item.Card.name}</td>
+                    <td>{item.Card ? item.Card.name : "sem nome"}</td>
                     <td>{!item.User ? "Todos" : item.User.name}</td>
                     <td>{"R$" + item.price % 1 === 0 ? item.price.toFixed(2) + ",00" : item.price.toFixed(2)}</td>
                     <td>{new Date(item.expireAt).toLocaleString("pt-BR")}</td>
