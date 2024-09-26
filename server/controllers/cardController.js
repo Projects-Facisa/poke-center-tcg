@@ -2,7 +2,31 @@ import Card from "../models/Card.js";
 
 export const getAllCards = async (req, res) => {
   try {
-    const cards = await Card.find({}, "-__v");
+    const cards = await Card.aggregate([
+      {
+        $lookup: {
+          from: 'promotions', // Nome da coleção de promoções
+          localField: '_id', // Campo na coleção de cartões
+          foreignField: 'Card', // Campo na coleção de promoções
+          as: 'promotions' // Nome do campo onde as promoções correspondentes serão armazenadas
+        }
+      },
+      {
+        $project: {
+          newPrice: { $arrayElemAt: ['$promotions.price', 0] },
+          id: 1,
+          name: 1,
+          image: 1,
+          rarity: 1,
+          category: 1,
+          stock: 1,
+          price: 1,
+          purchaseDate: 1,
+          // Adicione outros campos conforme necessário
+        }
+      }
+    ]);
+
     res.status(200).json(cards);
   } catch (error) {
     res.status(500).json({ error: error.message });

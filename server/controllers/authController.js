@@ -29,7 +29,6 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       image,
     });
-
     return res
       .status(201)
       .json({ message: "Usuário registrado com sucesso.", user: newUser });

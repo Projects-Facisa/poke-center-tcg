@@ -98,7 +98,7 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
   };
 
   const sortByPrice = () => {
-    setItems([...items].sort((a, b) => (isAscending ? a.price - b.price : b.price - a.price)));
+    setItems([...items].sort((a, b) => (isAscending ? (a.newPrice ? a.newPrice : a.price) - (b.newPrice ? b.newPrice : b.price)  : (b.newPrice ? b.newPrice : b.price) - (a.newPrice ? a.newPrice : a.price))));
   };
 
   const sortByPurchaseDate = () => {
@@ -154,7 +154,8 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
             </span>
           </td>
           <td>{item.stock}</td>
-          <td>{"R$" + item.price.toFixed(2)}</td>
+          {item.newPrice ? <td><span className='line-price'>{"R$" + item.price.toFixed(2)}</span>
+            <span className='new-price'>{"R$" + item.newPrice}</span></td> : <td><span>{"R$" + item.price.toFixed(2)}</span></td>}
           <td>{new Date(item.purchaseDate).toLocaleDateString("pt-BR")}</td>
           <td>
             <div className="action-menu" ref={actionMenuRef} >

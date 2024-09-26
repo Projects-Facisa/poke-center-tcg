@@ -1,31 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./PromotionItem.css";
 import { IoIosMore } from "react-icons/io";
-import EditProductPopUp from "../PopUps/EditProductPopUp/EditProductPopUp.jsx";
 import DeletePopUp from "../PopUps/DeletePopUp/DeletePopUp.jsx";
 import axios from "axios";
 import RegisterPromotionPopUp from "../PopUps/Promotion/RegisterPromotionPopUp/Register.jsx";
 
-function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
+function PromotionItem({ searchFilter = "", sortBy, isAscending, refreshTrigger}) {
     const [isPopUpOpen, setPopUpOpen] = useState(false);
     const [popView, setPopView] = useState("");
-    const [itemID, setItemID] = useState("");
-    const [items, setItems] = useState([]);
+    const [promotionID, setPromotionID] = useState("");
+    const [promotions, setPromotions] = useState([]);
     const [openMenuId, setOpenMenuId] = useState(false);
+    const [reload, setReload] = useState(0);
 
     const openPopUp = () => setPopUpOpen(true);
-    const closePopUp = () => setPopUpOpen(false);
+    const closePopUp = () => {setPopUpOpen(false); setReload(reload + 1)};
 
     let actionMenuRef = useRef();
 
-    const handlePopUp = (itemID, pop) => {
+    const handlePopUp = (promotion, pop) => {
         setPopView(pop);
-        setItemID(itemID);
+        setPromotionID(promotion._id);
         openPopUp();
     };
 
     useEffect(() => {
-        fetchItems();
+        fetchPromotions();
 
         let handler = (e) =>{
             if (!actionMenuRef.current.contains(e.target)){
@@ -34,24 +34,22 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
         };
 
         document.addEventListener("mousedown", handler);
-    }, []);
+    }, [refreshTrigger, reload]);
 
 
 
-    const fetchItems = async () => {
+    const fetchPromotions = async () => {
         try {
             const response = await axios.get("http://localhost:5000/promotions/");
-            setItems(response.data);
-            console.log(response.data);
+            setPromotions(response.data);
         } catch (error) {
-            console.error("Error fetching items:", error);
+            console.error("Error fetching promotions:", error);
         }
     };
 
-    const deleteItem = async (itemID) => {
+    const deletePromotion = async (promotionID) => {
         try {
-            const response = await axios.delete("http://localhost:5000/promotions/" + itemID);
-            console.log(response.data);
+            const response = await axios.delete("http://localhost:5000/promotions/" + promotionID);
         }
         catch (error){
             console.error({error: error.mensage})
@@ -59,15 +57,15 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
     }
 
     const sortByName = () => {
-        setItems([...items].sort((a, b) => (isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))));
+        setPromotions([...promotions].sort((a, b) => (isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))));
     };
 
     const sortByPrice = () => {
-        setItems([...items].sort((a, b) => (isAscending ? a.price - b.price : b.price - a.price)));
+        setPromotions([...promotions].sort((a, b) => (isAscending ? a.price - b.price : b.price - a.price)));
     };
 
     const sortByPurchaseDate = () => {
-        setItems([...items].sort((a, b) => {
+        setPromotions([...promotions].sort((a, b) => {
             const dateA = new Date(a.purchaseDate.split("/").reverse().join("-"));
             const dateB = new Date(b.purchaseDate.split("/").reverse().join("-"));
             return isAscending ? dateA - dateB : dateB - dateA;
@@ -82,9 +80,8 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
 
 
 
-    const filteredItems = items.filter((item) =>
-        item.Card ? item.Card.name.toLowerCase().includes(searchFilter.toLowerCase()) : "sem carta"
-    );
+    const filteredPromotions = promotions.filter((promotion) =>
+        promotion.Card ? promotion.Card.name.toLowerCase().includes(searchFilter.toLowerCase()) : true);
 
     const toggleMenu = (id) => {
         setOpenMenuId(openMenuId === id ? null : id);
@@ -92,23 +89,23 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
 
     return (
         <>
-            {filteredItems.map((item) => (
-                <tr key={item._id}>
-                    <td>{item.Card ? item.Card.name : "sem nome"}</td>
-                    <td>{!item.User ? "Todos" : item.User.name}</td>
-                    <td>{"R$" + item.price % 1 === 0 ? item.price.toFixed(2) + ",00" : item.price.toFixed(2)}</td>
-                    <td>{new Date(item.expireAt).toLocaleString("pt-BR")}</td>
+            {filteredPromotions.map((promotion) => (
+                <tr key={promotion._id}>
+                    <td>{!promotion.Card ? "Carta não encontrada" : promotion.Card.name}</td>
+                    <td>{!promotion.Client ? "Todos" : promotion.Client.name}</td>
+                    <td>{"R$" + promotion.price % 1 === 0 ? promotion.price.toFixed(2) + ",00" : promotion.price.toFixed(2)}</td>
+                    <td>{new Date(promotion.expireAt).toLocaleString("pt-BR")}</td>
                     <td>
                         <div className="action-menu" ref={actionMenuRef} >
-                            <button className="action-btn"  onClick={() => toggleMenu(item._id)}>
+                            <button className="action-btn"  onClick={() => toggleMenu(promotion._id)}>
                                 <IoIosMore />
                             </button>
-                            {openMenuId === item._id && (
+                            {openMenuId === promotion._id && (
                                 <div className="action-dropdown" ref={actionMenuRef}>
-                                    <button onClick={() => handlePopUp(item._id, 1)}>
+                                    <button onClick={() => handlePopUp(promotion, 1)}>
                                         Edit
                                     </button>
-                                    <button onClick={() => handlePopUp(item._id, 2)}>
+                                    <button onClick={() => handlePopUp(promotion, 2)}>
                                         Delete
                                     </button>
                                 </div>
@@ -122,15 +119,15 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending }) {
                 <RegisterPromotionPopUp
                     isOpen={isPopUpOpen}
                     onClose={closePopUp}
-                    itemID={itemID}
+                    itemID={promotionID}
                 />
             ) : null}
             {popView === 2 ? (
                 <DeletePopUp
                     isOpen={isPopUpOpen}
                     onClose={closePopUp}
-                    deleteItem={deleteItem}
-                    itemID={itemID}
+                    deleteObject={deletePromotion}
+                    itemID={promotionID}
                 />
             ) : null}
         </>

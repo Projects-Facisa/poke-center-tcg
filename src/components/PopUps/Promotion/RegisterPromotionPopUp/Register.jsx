@@ -3,7 +3,7 @@ import { IoClose } from "react-icons/io5";
 import "./Register.css";
 import axios from "axios";
 
-const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
+const RegisterPromotionPopUp = ({ isOpen, onClose, itemID, onPromotionRegister}) => {
     const [productPrice, setProductPrice] = useState("");
     const [expireDate, setExpireDate] = useState("");
     const [selectedCard, setSelectedCard] = useState(null);
@@ -17,6 +17,7 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
     const handleClose = () => {
         setProductPrice("");
         setSelectedCard(null);
+        setSearchInput('')
         setExpireDate("")
         setCards([]);
         setErrorMessage("");
@@ -48,13 +49,12 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
                     expireAt: expireDate,
                 });
 
-                console.log(response.data)
                 setErrorMessage("promoção adicionada");
-
+                onPromotionRegister()
                 handleClose();
             } catch (error) {
                 console.error("Erro ao atualizar promoção:", error);
-                setErrorMessage(error.message);
+                setErrorMessage(error.response.data.error);
             }
         }
         else {
@@ -65,38 +65,25 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
                     expireAt: expireDate,
                 });
 
-                console.log(response.data)
                 setErrorMessage("promoção adicionada");
 
                 handleClose();
             }
             catch (error) {
                 console.error("Erro ao atualizar promoção:", error);
+                setErrorMessage(error.response.data.error);
             }
         }
     };
 
     const handleSearchCard = async (e) => {
-        if (e.code === "Space") {
-            setSearchInput(e.target.value.trim());
+        if (e.code === "Enter" || e === "Enter") {
+            setSearchInput(e !== "Enter" ? e.target.value : searchInput);
             setErrorMessage("");
-            setCards([]);
 
             if (!searchInput) {
                 setErrorMessage("Por favor, digite um nome para pesquisar.");
                 return;
-            }
-
-            try {
-                const response = await axios.get("http://localhost:5000/cards/name/" + searchInput)
-
-                if (response.data.length === 0) {
-                    setErrorMessage("Nenhuma carta encontrada.");
-                } else {
-                    setCards(response.data);
-                }
-            } catch (error) {
-                setErrorMessage(error.message);
             }
         }
     };
@@ -150,17 +137,29 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
     }, [isOpen, cards]);
 
     useEffect(() => {
+        fetchCards();
         if (itemID) {
             getPromotionInfos(itemID)
-            handleSearchCard("Space")
+            handleSearchCard("Enter")
         }
     }, [isOpen])
+
+    const fetchCards = async() => {
+        try {
+            const response = await axios.get("http://localhost:5000/cards/")
+            setCards(response.data);
+            if (response.data.length === 0) {
+                setErrorMessage("Nenhuma carta encontrada.");
+            }
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+    }
 
     const getPromotionInfos = async(itemID) => {
             try {
 
                 const responsePromotion = await axios.get("http://localhost:5000/promotions/" + itemID);
-                console.log(responsePromotion)
                 const responseCard = await axios.get("http://localhost:5000/cards/" + responsePromotion.data.Card._id)
                 setProductPrice(responsePromotion.data.price);
                 setSelectedCard(responseCard.data);
@@ -173,6 +172,10 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
 
     }
 
+    const filteredCards = cards.filter((card) =>
+        card.name.toLowerCase().includes(searchInput.toLowerCase()) && card.stock > 0
+    );
+
     if (!isOpen) return null;
 
     return (
@@ -184,8 +187,8 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
                 <div className="popup-body">
 
                     <div className="form-section">
-                        <h2>Registrar Promoção</h2>
-                        <form onSubmit={handleSubmit}>
+                        <h2>{!itemID ? "Registrar Promoção" : "Atualizar Promoção"}</h2>
+                        <form>
                             <div className="form-group">
 
                                 <div className="input-label">
@@ -194,7 +197,7 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
                                         type="text"
                                         id="search-input"
                                         onKeyDown={handleSearchCard}
-                                        placeholder={!itemID ? "para pesquisar  aperte Enter" : "para pesquisar aperte Space Bar"}
+                                        placeholder="para pesquisar aperte Enter"
                                     />
                                 </div>{/*input-label*/}
 
@@ -228,7 +231,7 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
                                     />
                                 </div>{/*input-label*/}
 
-                                <div className="button-group"> <button type="submit">Registrar</button> </div>
+                                <div className="button-group"> <button id="searchButton" type="button" onClick={handleSubmit}>Registrar</button> </div>
 
                             </div> {/*form-group*/}
 
@@ -239,10 +242,10 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
 
                     <div className="cards-section" ref={cardsContainerRef}>
                         <div className="cards-container">
-                            {cards.length === 0 ? (
+                            {filteredCards.length === 0 ? (
                                 /*If Ternário ===>>> PlaceHolder*/
-                                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map(() => (
-                                    <div className="card placeholder">
+                                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map((index) => (
+                                    <div key={index} className="card placeholder">
                                         <img
                                             src="../src/assets/placeholder.png"
                                             alt="placeholder"
@@ -252,7 +255,7 @@ const RegisterPromotionPopUp = ({ isOpen, onClose, itemID}) => {
                                 ))
                             ) : (
                                 /*Else do If Ternário ===>>> Cartas*/
-                                cards.map((card) => (
+                                filteredCards.map((card) => (
                                     <div
                                         key={card.id}
                                         className={`card ${selectedCard?.id === card.id ? "selected" : ""}`}

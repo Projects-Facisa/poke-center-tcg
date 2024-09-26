@@ -4,11 +4,12 @@ const PromotionSchema = new mongoose.Schema({
     Card: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Card",
-        required: true
+        required: true,
+        unique: true
     },
-    User: {
+    Client: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Client",
         nullable: true, //aparece para todos os usuário quando for null
     },
     price: {

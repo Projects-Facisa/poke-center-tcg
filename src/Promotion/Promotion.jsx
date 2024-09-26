@@ -11,9 +11,11 @@ function Promotion() {
     const [isPopUpOpen, setPopUpOpen] = useState(false);
     const [sortBy, setSortBy] = useState("expireDate");
     const [isAscending, setIsAscending] = useState(true);
+    const [reload, setReload] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const openPopUp = () => setPopUpOpen(true);
-    const closePopUp = () => {setPopUpOpen(false); location.reload()};
+    const closePopUp = () => {setPopUpOpen(false)};
 
     const handleSort = (column) => {
         if (sortBy === column) {
@@ -29,6 +31,10 @@ function Promotion() {
             return isAscending ? <IoMdArrowUp/> : <IoMdArrowDown/>;
         }
         return null;
+    };
+
+    const refreshTable = () => {
+        setRefreshTrigger((prev) => prev + 1);
     };
 
     return (
@@ -78,10 +84,10 @@ function Promotion() {
                     </tr>
                     </thead>
                     <tbody>
-                    <PromotionItem searchFilter={search} sortBy={sortBy} isAscending={isAscending}/>
+                    <PromotionItem searchFilter={search} sortBy={sortBy} isAscending={isAscending} refreshTrigger={refreshTrigger}/>
                     </tbody>
                 </table>
-                <RegisterPromotionPopUp isOpen={isPopUpOpen} onClose={closePopUp}/>
+                <RegisterPromotionPopUp isOpen={isPopUpOpen} onClose={closePopUp} onPromotionRegister={refreshTable}/>
             </div>
         </Container>
     );

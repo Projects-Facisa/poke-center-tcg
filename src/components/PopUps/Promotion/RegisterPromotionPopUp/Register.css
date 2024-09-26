@@ -118,12 +118,12 @@ button {
     cursor: pointer;
 }
 
-button[type="submit"] {
+button[type="submit"], #searchButton {
     background-color: #4caf50;
     color: white;
 }
 
-button[type="submit"]:hover {
+button[type="submit"]:hover, #searchButton:hover {
     background-color: #16a01a;
 }
 

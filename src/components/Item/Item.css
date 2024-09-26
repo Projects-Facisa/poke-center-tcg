@@ -79,3 +79,9 @@
 .new-price {
   color: green;
 }
+
+.line-price {
+  text-decoration: line-through;
+  opacity: 0.8;
+  margin-right: 4px;
+}
