@@ -2,8 +2,6 @@ import Card from '../models/Card.js';
 
 export const getDashboardData = async (req, res) => {
   try {
-    console.log("Iniciando contagem total de cartas e raridades...");
-
     // Usando agregação para contar total e contagens por raridade
     const [result] = await Card.aggregate([
       {
