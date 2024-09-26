@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
-import axios from 'axios'; // Importar axios se não estiver já
+import axios from 'axios';
 import "./Charts.css";
 
 const colors = ["#B0B0B0", "#2ECC71", "#3498DB", "#9B59B6", "#F1C40F"];
@@ -21,9 +21,86 @@ function useECharts(option) {
   return chartRef;
 }
 
+const fetchData = async (setData, setLineData) => {
+  try {
+    const response = await axios.get('http://localhost:5000/cards');
+
+    if (Array.isArray(response.data)) {
+      const rarityCounts = {
+        common: 0,
+        uncommon: 0,
+        rare: 0,
+        ultraRare: 0,
+        others: 0,
+      };
+
+      const counts = Array(31).fill(0);
+
+      response.data.forEach(item => {
+        const rarity = item.rarity;
+        if (rarity === "Common") {
+          rarityCounts.common += 1;
+        } else if (rarity === "Uncommon") {
+          rarityCounts.uncommon += 1;
+        } else if (rarity === "Rare") {
+          rarityCounts.rare += 1;
+        } else if (rarity === "Ultra Rare") {
+          rarityCounts.ultraRare += 1;
+        } else {
+          rarityCounts.others += 1;
+        }
+
+        if (item.purchaseDate) {
+          const date = new Date(item.purchaseDate);
+          if (!isNaN(date)) {
+            const day = date.getDate();
+            if (day >= 1 && day <= 31) {
+              counts[day - 1] += 1;
+            }
+          }
+        }
+      });
+
+      setData(rarityCounts);
+      setLineData(prevData => ({
+        ...prevData,
+        series: [{
+          ...prevData.series[0],
+          data: counts,
+        }],
+      }));
+    }
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+  }
+};
+
 export function ColumnChartComponent() {
-  const [data, setData] = useState({ common: 0, uncommon: 0, rare: 0, ultraRare: 0, others: 0 });
-  const chartRef = useECharts({
+  const [data, setData] = useState({
+    common: 0,
+    uncommon: 0,
+    rare: 0,
+    ultraRare: 0,
+    others: 0
+  });
+
+  const seriesData = [
+    data.common,
+    data.uncommon,
+    data.rare,
+    data.ultraRare,
+    data.others
+  ].map((value, index) => ({
+    value,
+    itemStyle: {
+      color: colors[index],
+      borderColor: borderColors[index],
+      borderWidth: 2,
+      borderRadius: [5, 5, 0, 0],
+    },
+  }));
+
+  const columnData = {
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -62,22 +139,8 @@ export function ColumnChartComponent() {
     },
     series: [
       {
+        data: seriesData,
         type: "bar",
-        data: [
-          data.common,
-          data.uncommon,
-          data.rare,
-          data.ultraRare,
-          data.others
-        ].map((value, index) => ({
-          value,
-          itemStyle: {
-            color: colors[index],
-            borderColor: borderColors[index],
-            borderWidth: 2,
-            borderRadius: [5, 5, 0, 0],
-          },
-        })),
         label: {
           show: true,
           position: "top",
@@ -88,38 +151,12 @@ export function ColumnChartComponent() {
         animationEasing: "cubicOut",
       },
     ],
-  });
+  };
+
+  const chartRef = useECharts(columnData);
 
   useEffect(() => {
-    const fetchRarityCounts = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/dashboard');
-        console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
-        
-        const text = await response.text();
-  
-        if (!response.ok) {
-          throw new Error(`Network response was not ok: ${response.status}`);
-        }
-  
-        const result = JSON.parse(text);
-        
-        setData({
-          common: result.common || 0,
-          uncommon: result.uncommon || 0,
-          rare: result.rare || 0,
-          ultraRare: result.ultraRare || 0,
-          others: result.others || 0
-        });
-        
-        console.log('Dashboard data fetched:', result);
-      } catch (error) {
-        console.error('Erro ao buscar contagens de raridades:', error);
-      }
-    };
-  
-    fetchRarityCounts();
+    fetchData(setData, () => {});
   }, []);
 
   return <div ref={chartRef} style={{ height: "400px", width: "100%" }} />;
@@ -149,7 +186,7 @@ export function LineChartComponent() {
     series: [
       {
         name: "Cartas Registradas",
-        data: Array(31).fill(0), // Inicializa com zeros
+        data: Array(31).fill(0),
         type: "line",
         smooth: true,
         symbol: "circle",
@@ -161,52 +198,11 @@ export function LineChartComponent() {
     ],
   });
 
-  const fetchItems = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/cards');
-      
-      if (Array.isArray(response.data)) {
-        const counts = Array(31).fill(0); // Inicializa um array para contagem de dias
-
-        response.data.forEach(item => {
-          // Certifique-se de que o campo 'purchaseDate' existe
-          if (item.purchaseDate) {
-            const date = new Date(item.purchaseDate); // Acesse o campo purchaseDate
-            if (!isNaN(date)) {
-              const day = date.getDate();
-              if (day >= 1 && day <= 31) {
-                counts[day - 1] += 1; // Incrementa a contagem para o dia correspondente
-              }
-            } else {
-              console.warn("Data inválida:", item.purchaseDate);
-            }
-          } else {
-            console.warn("Campo de purchaseDate ausente no item:", item);
-          }
-        });
-
-        // Atualizar os dados do gráfico com as contagens
-        setLineData(prevData => ({
-          ...prevData,
-          series: [{
-            ...prevData.series[0],
-            data: counts,
-          }],
-        }));
-
-      } else {
-        console.error("Os dados não são um array:", response.data);
-      }
-    } catch (error) {
-      console.error("Error no carregamento das cartas:", error);
-    }
-  };
+  const chartRef = useECharts(lineData);
 
   useEffect(() => {
-    fetchItems();
+    fetchData(() => {}, setLineData);
   }, []);
 
-  const chartRef = useECharts(lineData);
-  
   return <div ref={chartRef} style={{ height: "400px", width: "100%" }} />;
 }
