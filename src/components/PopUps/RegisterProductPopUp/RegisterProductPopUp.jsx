@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import "./RegisterProductPopUp.css";
 
-const RegisterProductPopUp = ({ isOpen, onClose }) => {
+const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
@@ -45,7 +45,7 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
       const cardDetails = await response.json();
 
       // Enviar os dados completos para o backend
-      const addCardResponse = await fetch("http://localhost:5000/add-card", {
+      const addCardResponse = await fetch("http://localhost:5000/cards/add-card", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,6 +69,7 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
       }
 
       console.log(result.message);
+      onProductAdded();
       handleClose();
     } catch (error) {
       console.error("Erro ao adicionar carta:", error.message);
@@ -188,8 +189,8 @@ const RegisterProductPopUp = ({ isOpen, onClose }) => {
             <div className="cards-container">
               {cards.length === 0 ? (
                 /*If Ternário ===>>> PlaceHolder*/
-                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map(() => (
-                  <div className="card placeholder">
+                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map((_, index) => (
+                  <div key={index} className="card placeholder">
                     <img
                       src="../src/assets/placeholder.png"
                       alt="placeholder"

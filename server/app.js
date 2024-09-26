@@ -2,12 +2,15 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/database.js";
+import tcgdexRoutes from "./routes/tcgdexRoutes.js"
 import cardRoutes from "./routes/cardRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import clientRoutes from "./routes/clientRoutes.js"
 import promotionRoutes from "./routes/promotionRoutes.js";
 import cookieParser from "cookie-parser";
 import { verifyUser } from "./middleware/authMiddleware.js";
+import dashboardRoutes from './routes/dashboardRoutes.js';
+
 dotenv.config();
 
 const app = express();
@@ -30,9 +33,11 @@ app.get("/Admin", verifyUser, (req, res) => {
 connectDB();
 
 app.use("/api/users", authRoutes);
-app.use("/cards", cardRoutes);
+app.use(tcgdexRoutes);
+app.use("/cards",cardRoutes);
 app.use("/promotions", promotionRoutes);
 app.use(clientRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 app.listen(portApi, () => {
   console.log(`API Server rodando na porta ${portApi}`);

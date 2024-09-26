@@ -4,7 +4,7 @@ import { IoIosMore } from "react-icons/io";
 import EditProductPopUp from "../PopUps/EditProductPopUp/EditProductPopUp.jsx";
 import DeletePopUp from "../PopUps/DeletePopUp/DeletePopUp.jsx";
 
-function Item({ searchFilter = "", sortBy, isAscending }) {
+function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const [popView, setPopView] = useState("");
   const [itemID, setItemID] = useState("");
@@ -32,13 +32,13 @@ function Item({ searchFilter = "", sortBy, isAscending }) {
     };
 
     document.addEventListener("mousedown", handler);
-  }, []);
+  }, [refreshTrigger]);
 
 
 
   const fetchItems = async () => {
     try {
-      const response = await fetch("http://localhost:5000/");
+      const response = await fetch("http://localhost:5000/cards");
       if (!response.ok) {
         throw new Error("Failed to fetch items");
       }
@@ -51,7 +51,7 @@ function Item({ searchFilter = "", sortBy, isAscending }) {
 
   const updateItem = async (id, updatedData) => {
     try {
-      const response = await fetch(`http://localhost:5000/${id}`, {
+      const response = await fetch(`http://localhost:5000/cards/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function Item({ searchFilter = "", sortBy, isAscending }) {
 
   const deleteItem = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/${id}`, {
+      const response = await fetch(`http://localhost:5000/cards/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -189,7 +189,7 @@ function Item({ searchFilter = "", sortBy, isAscending }) {
         <DeletePopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
-          deleteItem={deleteItem}
+          deleteObject={deleteItem}
           itemID={itemID}
         />
       ) : null}
