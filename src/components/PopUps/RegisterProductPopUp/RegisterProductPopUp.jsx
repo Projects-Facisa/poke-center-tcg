@@ -1,16 +1,20 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useDeferredValue } from "react";
 import { IoClose } from "react-icons/io5";
 import "./RegisterProductPopUp.css";
 
-const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
+const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
+  
+  const deferredSearchInput = useDeferredValue(searchInput);
   
   const cardsContainerRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
   
   const handleClose = () => {
     setProductQuantity(0);
@@ -18,6 +22,7 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
     setSelectedCard(null);
     setCards([]);
     setErrorMessage("");
+    setSearchInput("");
     onClose();
   };
 
@@ -77,35 +82,32 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
     }
   };
 
-  const handleSearch = async (e) => {
-    if (e.key === "Enter") {
-      const searchInput = e.target.value.trim();
-      setErrorMessage("");
-      setCards([]);
+  const handleSearch = async () => {
+    setErrorMessage("");
+    setCards([]);
 
-      if (!searchInput) {
-        setErrorMessage("Por favor, digite um nome para pesquisar.");
-        return;
-      }
+    if (!deferredSearchInput.trim()) {
+      setErrorMessage("Por favor, digite um nome para pesquisar.");
+      return;
+    }
 
-      try {
-        const response = await fetch(
-          `http://localhost:5000/fetch-cards?name=${encodeURIComponent(
-            searchInput
-          )}`
-        );
-        if (!response.ok) {
-          throw new Error("Erro ao buscar as cartas.");
-        }
-        const fetchedCards = await response.json();
-        if (fetchedCards.length === 0) {
-          setErrorMessage("Nenhuma carta encontrada.");
-        } else {
-          setCards(fetchedCards);
-        }
-      } catch (error) {
-        setErrorMessage(error.message);
+    try {
+      const response = await fetch(
+        `http://localhost:5000/fetch-cards?name=${encodeURIComponent(
+          deferredSearchInput.trim()
+        )}`
+      );
+      if (!response.ok) {
+        throw new Error("Erro ao buscar as cartas.");
       }
+      const fetchedCards = await response.json();
+      if (fetchedCards.length === 0) {
+        setErrorMessage("Nenhuma carta encontrada.");
+      } else {
+        setCards(fetchedCards);
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
     }
   };
 
@@ -132,6 +134,25 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
     window.addEventListener("resize", handleResize);
   }, [isOpen, cards]);
 
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      handleSearch(deferredSearchInput);
+    }, 1000);
+  
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [deferredSearchInput]);
+
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -152,9 +173,10 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
                   <input
                     type="text"
                     id="search-input"
-                    onKeyDown={handleSearch}
-                    placeholder="Digite o nome da carta e aperte Enter"
-                    />
+                    value={searchInput}
+                    onChange={handleInputChange}
+                    placeholder="Digite o nome da carta"
+                  />
                 </div>{/*input-label*/}
         
                 <div className="input-label">
