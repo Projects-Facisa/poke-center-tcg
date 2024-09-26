@@ -1,33 +1,33 @@
 .dashboard-panel {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1%;
-  padding: 12px 0;
+  gap: 15px;
+  padding: 15px 0;
+  height: 150px;
 }
 
 .square {
-  position: relative;
-  height: 120px;
+  padding: 13px;
   background-color: var(--white);
   color: var(--black);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  text-align: center;
-  border-radius: 2px;
+  justify-content: space-between;
+  border-radius: 15px;
   border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
-.square .number {
-  font-size: 25px;
+.square .content {
+  & h4{
+    color: #555;
+    font-size: 10pt;
+  }
+  & span {
+    font-size: 25pt;
+    text-align: start;
+    font-weight: 800;
+  }
 }
 
-.square .text {
-  font-size: 25px;
-  position: absolute;
-  top: 0px;
-  left: 8px;
-  font-size: 25px;
-  font-weight: 550;
+.icon-square {
+  font-size: 40pt;
 }
