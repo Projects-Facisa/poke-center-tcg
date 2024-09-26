@@ -2,7 +2,7 @@ import "./Dashboard.css";
 import Container from "../components/Container/Container.jsx";
 import React, { useEffect, useState } from "react";
 import {
-  ColumnChartComponent,
+  ColumnChartComponent,LineChartComponent,
 } from "../components/Charts/Charts.jsx";
 import { FaChartColumn, FaCheckToSlot } from "react-icons/fa6";
 import axios from "axios";
@@ -10,6 +10,7 @@ import { TbCards, TbCircleCheck, TbTruckLoading, TbXboxX } from "react-icons/tb"
 import { FaCheckCircle, FaCheckSquare, FaTruckLoading } from "react-icons/fa";
 import { RiDiscountPercentFill } from "react-icons/ri";
 import { MdOutlineLocalOffer } from "react-icons/md";
+import { RiLineChartLine } from "react-icons/ri";
 
 function Dashboard() {
   const [items, setItems] = useState([]);
@@ -97,12 +98,12 @@ function Dashboard() {
           </div>
           <ColumnChartComponent />
         </div>
-        {/* <div className="chart">
-          <div className="chart-header">
-            <RiLineChartLine />
-          </div>
-          <LineChartComponent />
-        </div> */}
+        <div className="chart">
+          <div className="chart-header"> 
+            <RiLineChartLine  /> 
+            </div> 
+            <LineChartComponent /> 
+            </div>
       </div>
     </Container>
   );
