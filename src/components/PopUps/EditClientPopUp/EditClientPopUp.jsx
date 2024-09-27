@@ -7,10 +7,9 @@ import "react-toastify/dist/ReactToastify.css";
 const EditClientPopUp = ({
   isOpen,
   onClose,
-  onClientAdded,
   clients,
   clientID,
-  updateClient,
+  updateClient
 }) => {
   const [clientName, setClientName] = useState("");
   const [clientAge, setClientAge] = useState("");
@@ -25,8 +24,9 @@ const EditClientPopUp = ({
       const client = clients.find((client) => client._id === clientID);
       if (client) {
         setClientName(client.name);
-        setClientAge(client.born);
+        setClientAge(client.born.split("T")[0]);
         setClientEmail(client.email);
+        setClientPurchases(client.purchaseCount || 0);
       }
     }
   }, [isOpen, clientID, clients]);

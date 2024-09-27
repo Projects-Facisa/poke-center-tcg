@@ -59,8 +59,40 @@ export const addClient = async (req, res) => {
 };
 
 export const updateClient = async (req, res) => {
-    
-}
+    try {
+        const { id } = req.params;
+        const { name, born, purchaseCount } = req.body;
+
+        if (name === undefined || born === undefined) {
+            return res.status(400).json({ error: "Os campos Nome e Data de Nascimento são obrigatórios" });
+        }
+
+        const updateData = {
+            name,
+            born,
+        };
+
+        if (purchaseCount === 0) {
+            updateData.$unset = { purchaseCount };
+        } else {
+            updateData.purchaseCount = purchaseCount;
+        }
+
+        const updatedClient = await Client.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true}
+        );
+
+        if (!updatedClient) {
+            return res.status(404).json({ error: "Cliente não encontrado" });
+        }
+
+        res.status(200).json(updatedClient);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 export const deleteClient = async (req, res) => {
     try {

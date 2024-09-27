@@ -2,40 +2,49 @@ import React, { useState, useEffect, useRef } from "react";
 import Container from "../components/Container/Container.jsx";
 import "./ClientsView.css";
 import axios from "axios";
-import { IoIosMore, IoMdArrowDown, IoMdArrowUp} from "react-icons/io";
+import { IoIosMore, IoMdArrowDown, IoMdArrowUp, IoIosAdd } from "react-icons/io";
 import { FaUserCheck } from "react-icons/fa6";
 import { SiVerizon } from "react-icons/si";
 import { MdShoppingCart } from "react-icons/md";
+import SearchBar from "../components/SearchBar/SearchBar.jsx";
 
 import EditClientPopUp from "../components/PopUps/EditClientPopUp/EditClientPopUp.jsx";
 import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/RegisterClientPopUp.jsx";
 import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
 
-function ViewUsers(refreshTrigger) {
+function ViewUsers() {
   const [clients, setClients] = useState([]);
   const [isPopUpOpen, setPopUpOpen] = useState(false);
   const [topClients, setTopClients] = useState([]);
   const [sortBy, setSortBy] = useState("code");
   const [isAscending, setIsAscending] = useState(true);
-
+  
   const [popView, setPopView] = useState("");
   const [clientID, setClientID] = useState("");
-
+  
   const [openMenuId, setOpenMenuId] = useState(false);
+  const actionMenuRef = useRef();
 
-  let actionMenuRef = useRef();
+  const openPopUp = () => setPopUpOpen(true);
+  const closePopUp = () => {
+    setPopUpOpen(false);
+    setPopView(""); // Reset popView ao fechar
+  };
 
   useEffect(() => {
     fetchClients();
-
-    let handler = (e) =>{
-      if (!actionMenuRef.current.contains(e.target)){
+    
+    const handler = (e) => {
+      if (!actionMenuRef.current.contains(e.target)) {
         setOpenMenuId(false);
       }
     };
 
     document.addEventListener("mousedown", handler);
-  }, [refreshTrigger]);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
+  }, []);
 
   const handlePopUp = (clientID, pop) => {
     setPopView(pop);
@@ -45,13 +54,7 @@ function ViewUsers(refreshTrigger) {
 
   const getTopClients = (clients) => {
     return clients
-      .filter(
-        (client) => 
-          client &&
-          client.purchaseCount !== null && 
-          client.purchaseCount !== undefined && 
-          client.purchaseCount > 0
-      )
+      .filter(client => client && client.purchaseCount > 0)
       .sort((a, b) => b.purchaseCount - a.purchaseCount)
       .slice(0, 5);
   };
@@ -60,9 +63,6 @@ function ViewUsers(refreshTrigger) {
     const topFiveClients = getTopClients(clients);
     setTopClients(topFiveClients);
   }, [clients]);
-
-  const openPopUp = () => setPopUpOpen(true);
-  const closePopUp = () => setPopUpOpen(false);
 
   const fetchClients = async () => {
     try {
@@ -78,8 +78,8 @@ function ViewUsers(refreshTrigger) {
     }
   };
 
-    useEffect(() => {
-      fetchClients();
+  useEffect(() => {
+    fetchClients();
   }, []);
 
   const calcTotalPurchases = (clients) => {
@@ -103,7 +103,7 @@ function ViewUsers(refreshTrigger) {
   };
 
   const refreshTable = () => {
-      fetchClients();
+    fetchClients();
   };
 
   const handleSort = (column) => {
@@ -122,7 +122,7 @@ function ViewUsers(refreshTrigger) {
     return null;
   };
 
-  const sortedClients = clients.sort((a, b) => {
+  const sortedClients = [...clients].sort((a, b) => {
     const aValue = a[sortBy] || "";
     const bValue = b[sortBy] || "";
 
@@ -132,15 +132,14 @@ function ViewUsers(refreshTrigger) {
       return aValue < bValue ? 1 : -1;
     }
   });
-  
+
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
 
-
   const updateClient = async (id, updatedData) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/update/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/clients/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +149,7 @@ function ViewUsers(refreshTrigger) {
       if (!response.ok) {
         throw new Error("Failed to update Client");
       }
-      fetchClient();
+      fetchClients();
     } catch (error) {
       console.error("Error updating Client:", error);
     }
@@ -172,8 +171,22 @@ function ViewUsers(refreshTrigger) {
 
   return (
     <Container>
-      <div className="userview-header">
-        <h1>Visualização de Clientes</h1>
+      <div className="table-header">
+        <h1>Clientes</h1>
+        <div className="header-end">
+          <div className="table-header-btns">
+            <button className="header-btn" onClick={() => handlePopUp("", 0)}>
+              <p>Cadastrar Cliente</p>
+              <span>
+                <IoIosAdd />
+              </span>
+            </button>
+
+          </div>
+          <div className="table-search-bar">
+          <SearchBar input={"Pesquisar um Cliente..."}/>
+          </div>
+        </div>
       </div>
       <div className="container-grid">
         <div className="client-grid">
@@ -183,12 +196,12 @@ function ViewUsers(refreshTrigger) {
                 <h4>Clientes cadastrados</h4>
                 <span>{clients.length}</span>
               </div>
-                <div className="icon"><FaUserCheck /></div>
+              <div className="icon"><FaUserCheck /></div>
             </div>
             <div className="infos-box">
               <div className="info">
                 <h4>Clientes ativos</h4>
-                <span>{clients.filter((client) => client.purchaseCount).length}</span>
+                <span>{clients.filter(client => client.purchaseCount).length}</span>
               </div>
               <div className="icon ativo"><SiVerizon /></div>
             </div>
@@ -204,7 +217,7 @@ function ViewUsers(refreshTrigger) {
             <table>
               <thead>
                 <tr>
-                <th>
+                  <th>
                     <span onClick={() => handleSort("code")} className="clickable-text">
                       Code {renderSortIcon("code")}
                     </span>
@@ -219,41 +232,35 @@ function ViewUsers(refreshTrigger) {
                       Idade {renderSortIcon("born")}
                     </span>
                   </th>
-                  <th>
-                    <span>
-                      Email
-                    </span>
-                  </th>
+                  <th>Email</th>
                   <th>
                     <span onClick={() => handleSort("purchaseCount")} className="clickable-text">
                       Compras {renderSortIcon("purchaseCount")}
                     </span>
                   </th>
-                  <th>
-                    <span>ação</span>
-                  </th>
+                  <th>Ação</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedClients.map((client) => (
-                  <tr>
+                  <tr key={client._id}>
                     <td>{client.code}</td>
                     <td>{client.name}</td>
                     <td>{calcAge(client.born)}</td>
                     <td>{client.email}</td>
                     <td>{client.purchaseCount > 0 ? client.purchaseCount : 0}</td>
                     <td>
-                    <div className="action-menu" ref={actionMenuRef} >
-                      <button className="action-btn"  onClick={() => toggleMenu(client._id)}>
-                        <IoIosMore />
-                      </button>
-                      {openMenuId === client._id && (
-                        <div className="action-dropdown" ref={actionMenuRef}>
-                          <button onClick={() => handlePopUp(client._id, 1)}> Edit </button>
-                          <button onClick={() => handlePopUp(client._id, 2)}> Delete </button>
-                        </div>
-                      )}
-                    </div>
+                      <div className="action-menu" ref={actionMenuRef}>
+                        <button className="action-btn" onClick={() => toggleMenu(client._id)}>
+                          <IoIosMore />
+                        </button>
+                        {openMenuId === client._id && (
+                          <div className="action-dropdown" ref={actionMenuRef}>
+                            <button onClick={() => handlePopUp(client._id, 1)}> Edit </button>
+                            <button onClick={() => handlePopUp(client._id, 2)}> Delete </button>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -262,9 +269,6 @@ function ViewUsers(refreshTrigger) {
           </div>
         </div>
         <div className="newclient-grid">
-          <div className="newclient">
-            <button onClick={openPopUp}>CADASTRAR NOVO CLIENTE</button>
-          </div>
           <div className="panel-top5">
             <h3>RANKING DE COMPRAS</h3>
             <ul>
@@ -273,8 +277,8 @@ function ViewUsers(refreshTrigger) {
                 <div>Nome</div>
                 <div className="purchaseCount">Compras</div>
               </li>
-              {topClients.map((client) => (
-                <li>
+              {topClients.map(client => (
+                <li key={client._id}>
                   <div className="code">{client.code}</div>
                   <div className="name">{client.name}</div>
                   <div className="purchaseCount">{client.purchaseCount}</div>
@@ -283,9 +287,16 @@ function ViewUsers(refreshTrigger) {
             </ul>
           </div>
         </div>
-        <RegisterClientPopUp isOpen={isPopUpOpen && popView === ""} onClose={closePopUp} onClientAdded={refreshTable} />
       </div>
-      {popView === 1 ? (
+
+      {popView === 0 && (
+        <RegisterClientPopUp
+          isOpen={isPopUpOpen}
+          onClose={closePopUp}
+          onClientAdded={refreshTable}
+        />
+      )}
+      {popView === 1 && (
         <EditClientPopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
@@ -293,15 +304,15 @@ function ViewUsers(refreshTrigger) {
           clients={clients}
           clientID={clientID}
         />
-      ) : null}
-      {popView === 2 ? (
+      )}
+      {popView === 2 && (
         <DeletePopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
           deleteObject={deleteClient}
           itemID={clientID}
         />
-      ) : null}
+      )}
     </Container>
   );
 }
