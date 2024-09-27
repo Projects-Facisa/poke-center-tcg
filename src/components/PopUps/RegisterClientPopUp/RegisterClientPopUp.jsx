@@ -26,7 +26,9 @@ const RegisterClientPopUp = ({ isOpen, onClose, onClientAdded }) => {
 
         try {
             const newClient = {
-                name: clientName,
+                name: clientName.split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(" "),
                 age: new Date(clientAge),
                 email: clientEmail
             };
