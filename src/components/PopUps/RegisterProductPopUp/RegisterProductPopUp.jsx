@@ -1,17 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { IoClose } from "react-icons/io5";
 import "./RegisterProductPopUp.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
+const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] = useState(0);
-  
+  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] =
+    useState(0);
+
   const cardsContainerRef = useRef(null);
-  
+  const notifySuccess = (message) => toast.success(message);
+
   const handleClose = () => {
     setProductQuantity(0);
     setProductPrice("");
@@ -45,22 +49,25 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
       const cardDetails = await response.json();
 
       // Enviar os dados completos para o backend
-      const addCardResponse = await fetch("http://localhost:5000/cards/add-card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: cardDetails.id,
-          name: cardDetails.name,
-          image: cardDetails.image,
-          rarity: cardDetails.rarity,
-          category: cardDetails.category,
-          stock: productQuantity,
-          price: productPrice,
-          purchaseDate: new Date(),
-        }),
-      });
+      const addCardResponse = await fetch(
+        "http://localhost:5000/cards/add-card",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: cardDetails.id,
+            name: cardDetails.name,
+            image: cardDetails.image,
+            rarity: cardDetails.rarity,
+            category: cardDetails.category,
+            stock: productQuantity,
+            price: productPrice,
+            purchaseDate: new Date(),
+          }),
+        }
+      );
 
       const result = await addCardResponse.json();
 
@@ -70,6 +77,7 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
 
       console.log(result.message);
       onProductAdded();
+      notifySuccess("Carta adicionada com sucesso");
       handleClose();
     } catch (error) {
       console.error("Erro ao adicionar carta:", error.message);
@@ -121,11 +129,12 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
 
         const tamanhoCardContainer = largura * altura; //Tamanho quadrado² do container pai
 
-        const tamanhoImgCard = 150 * 200.52 //Tamanho do card da imagem
+        const tamanhoImgCard = 150 * 200.52; //Tamanho do card da imagem
 
-        let tamanhoPlaceHolderContainerr = tamanhoCardContainer / tamanhoImgCard; //Quantiade de cards que cabem dentro da div pai
+        let tamanhoPlaceHolderContainerr =
+          tamanhoCardContainer / tamanhoImgCard; //Quantiade de cards que cabem dentro da div pai
 
-        setTamanhoPlaceHolderContainer(tamanhoPlaceHolderContainerr) //Setando quantidade no state
+        setTamanhoPlaceHolderContainer(tamanhoPlaceHolderContainerr); //Setando quantidade no state
       }
     };
     handleResize();
@@ -137,16 +146,14 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
   return (
     <div className="popup-overlay">
       <div className="popup-content register">
-
-        <IoClose className="x-close" onClick={handleClose} />{/*Botão de fechar*/}
+        <IoClose className="x-close" onClick={handleClose} />
+        {/*Botão de fechar*/}
 
         <div className="popup-body">
-
           <div className="form-section">
             <h2>Registrar Produto</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-
                 <div className="input-label">
                   <label>Nome da Carta:</label>
                   <input
@@ -154,18 +161,20 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
                     id="search-input"
                     onKeyDown={handleSearch}
                     placeholder="Digite o nome da carta e aperte Enter"
-                    />
-                </div>{/*input-label*/}
-        
+                  />
+                </div>
+                {/*input-label*/}
+
                 <div className="input-label">
                   <label>Quantidade em Estoque:</label>
                   <input
                     type="number"
                     onChange={(e) => setProductQuantity(Number(e.target.value))}
                     required
-                    />
-                </div>{/*input-label*/}
-            
+                  />
+                </div>
+                {/*input-label*/}
+
                 <div className="input-label">
                   <label>Preço do Produto:</label>
                   <input
@@ -174,52 +183,60 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded}) => {
                     onChange={(e) => setProductPrice(e.target.value)}
                     required
                   />
-                </div>{/*input-label*/}
-                
-                <div className="button-group"> <button type="submit">Registrar</button> </div>
+                </div>
+                {/*input-label*/}
 
-              </div> {/*form-group*/}
-              
-              {errorMessage && (<div className="error-message">{errorMessage}</div>)}{/*FeedBack*/}
-
+                <div className="button-group">
+                  {" "}
+                  <button type="submit">Registrar</button>{" "}
+                </div>
+              </div>{" "}
+              {/*form-group*/}
+              {errorMessage && (
+                <div className="error-message">{errorMessage}</div>
+              )}
+              {/*FeedBack*/}
             </form>
-          </div>{/*form-section*/}
+          </div>
+          {/*form-section*/}
 
           <div className="cards-section" ref={cardsContainerRef}>
             <div className="cards-container">
-              {cards.length === 0 ? (
-                /*If Ternário ===>>> PlaceHolder*/
-                Array.from({ length: parseInt(tamanhoPlaceHolderContainer / 1.5 )}).map((_, index) => (
-                  <div key={index} className="card placeholder">
-                    <img
-                      src="../src/assets/placeholder.png"
-                      alt="placeholder"
-                      className="card-image"
-                    />
-                  </div>
-                ))
-              ) : (
-                /*Else do If Ternário ===>>> Cartas*/
-                cards.map((card) => (
-                  <div
-                    key={card.id}
-                    className={`card ${selectedCard?.id === card.id ? "selected" : ""}`}
-                    onClick={() => handleCardClick(card)}
+              {cards.length === 0
+                ? /*If Ternário ===>>> PlaceHolder*/
+                  Array.from({
+                    length: parseInt(tamanhoPlaceHolderContainer / 1.5),
+                  }).map((_, index) => (
+                    <div key={index} className="card placeholder">
+                      <img
+                        src="../src/assets/placeholder.png"
+                        alt="placeholder"
+                        className="card-image"
+                      />
+                    </div>
+                  ))
+                : /*Else do If Ternário ===>>> Cartas*/
+                  cards.map((card) => (
+                    <div
+                      key={card.id}
+                      className={`card ${
+                        selectedCard?.id === card.id ? "selected" : ""
+                      }`}
+                      onClick={() => handleCardClick(card)}
                     >
-                    <img
-                      src={
-                        card.image
-                          ? `${card.image}/high.png`
-                          : "../src/assets/placeholder.png"
-                      }
-                      alt={card.name}
-                      className="card-image"
-                    />
-                    <h2>{card.name}</h2>
-                    <p>ID: {card.id}</p>
-                  </div>
-                ))
-              )}
+                      <img
+                        src={
+                          card.image
+                            ? `${card.image}/high.png`
+                            : "../src/assets/placeholder.png"
+                        }
+                        alt={card.name}
+                        className="card-image"
+                      />
+                      <h2>{card.name}</h2>
+                      <p>ID: {card.id}</p>
+                    </div>
+                  ))}
             </div>
           </div>
         </div>

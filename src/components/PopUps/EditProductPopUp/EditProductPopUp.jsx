@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./EditProductPopUp.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditProductPopUp = ({ isOpen, onClose, itemID, items, updateItem }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const notifySuccess = (message) => toast.success(message);
 
   useEffect(() => {
     if (isOpen && itemID) {
@@ -38,6 +42,7 @@ const EditProductPopUp = ({ isOpen, onClose, itemID, items, updateItem }) => {
       };
 
       await updateItem(itemID, updatedData);
+      notifySuccess("Produto Atualizado");
       handleClose();
     } catch (error) {
       console.error("Erro ao atualizar produto:", error.message);

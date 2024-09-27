@@ -7,9 +7,11 @@ import "./Controller.css";
 import Table from "../Table/Table.jsx";
 import Dashboard from "../Dashboard/Dashboard.jsx";
 import Promotion from "../Promotion/Promotion.jsx";
-import {RiDiscountPercentFill} from "react-icons/ri";
+import { RiDiscountPercentFill } from "react-icons/ri";
 import ClientsView from "../ClientsView/ClientsView.jsx";
 import { FaUserGear, FaUserGroup } from "react-icons/fa6";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Controller() {
   const [view, setView] = useState(1);
@@ -33,13 +35,13 @@ function Controller() {
           onClick={() => setView(3)}
           className={view === 3 ? "active" : ""}
         >
-        <RiDiscountPercentFill />
+          <RiDiscountPercentFill />
         </button>
         <button
           onClick={() => setView(4)}
           className={view === 4 ? "active" : ""}
         >
-            <FaUserGroup />
+          <FaUserGroup />
         </button>
         <button
           onClick={() => setView(5)}
@@ -47,12 +49,13 @@ function Controller() {
         >
           <FaUserGear />
         </button>
+        <ToastContainer />
       </div>
       <div id="content">
         {view === 1 ? <Dashboard /> : ""}
         {view === 2 ? <Table /> : ""}
         {view === 3 ? <Promotion /> : ""}
-        {view === 4 ? <ClientsView/> : ""}
+        {view === 4 ? <ClientsView /> : ""}
       </div>
     </div>
   );

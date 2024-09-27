@@ -5,19 +5,17 @@ import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
   const { name, email, password, image } = req.body;
 
-  console.log("Dados recebidos no register:", req.body);
-
   if (!name || !email || !password) {
-    return res
-      .status(400)
-      .json({ error: "Preencha todos os campos obrigatórios." });
+    return res.status(400).json({ error: "Solicitação Inválida" });
   }
 
   try {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return res.status(400).json({ error: "Este e-mail já está registrado." });
+      return res
+        .status(400)
+        .json({ error: "Não foi possível processar sua solicitação." });
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -29,9 +27,7 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       image,
     });
-    return res
-      .status(201)
-      .json({ message: "Usuário registrado com sucesso.", user: newUser });
+    return res.status(201).json({ message: "Usuário registrado com sucesso." });
   } catch (error) {
     return res.status(500).json({
       error:
@@ -47,22 +43,21 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("Usuário não encontrado:", email);
-      return res.status(404).json({
+      return res.status(400).json({
         login: false,
-        message: "Usuário não encontrado. Verifique seu e-mail.",
+        message: "Credenciais inválidas. Verifique seu e-mail ou senha.",
       });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      console.log("Senha incorreta para o email:", email);
       return res.status(400).json({
         login: false,
-        message: "Senha incorreta. Verifique sua senha.",
+        message: "Credenciais inválidas. Verifique seu e-mail ou senha.",
       });
     }
+
     const accessToken = jwt.sign(
       { email: user.email, permissions: user.permissions },
       process.env.JWT_ACCESS_SECRET,

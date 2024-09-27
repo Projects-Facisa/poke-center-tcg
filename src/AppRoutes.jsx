@@ -3,6 +3,7 @@ import Login from "./Login/Login.jsx";
 import Controller from "./Controller/Controller.jsx";
 import "./App.css";
 import ProtectedRoute from "./components/protectedRoute/protectedRoute.jsx";
+
 function AppRoutes() {
   return (
     <BrowserRouter>

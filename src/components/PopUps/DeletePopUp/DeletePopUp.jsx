@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "./DeletePopUp.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const DeletePopUp = ({isOpen,onClose,deleteObject,itemID,}) => {
-
+const DeletePopUp = ({ isOpen, onClose, deleteObject, itemID }) => {
   const handleClose = () => {
     onClose();
   };
 
+  const notifySuccess = (message) => toast.success(message);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     deleteObject(itemID);
-    console.log("Objeto Deletado");
+    notifySuccess("Item deletado");
     handleClose();
   };
 
