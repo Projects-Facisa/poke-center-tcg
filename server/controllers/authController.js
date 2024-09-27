@@ -5,8 +5,6 @@ import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
   const { name, email, password, image } = req.body;
 
-  console.log("Dados recebidos no register:", req.body);
-
   if (!name || !email || !password) {
     return res
       .status(400)
@@ -48,22 +46,21 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("Usuário não encontrado:", email);
-      return res.status(404).json({
+      return res.status(400).json({
         login: false,
-        message: "Usuário não encontrado. Verifique seu e-mail.",
+        message: "Credenciais inválidas. Verifique seu e-mail ou senha.",
       });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      console.log("Senha incorreta para o email:", email);
       return res.status(400).json({
         login: false,
-        message: "Senha incorreta. Verifique sua senha.",
+        message: "Credenciais inválidas. Verifique seu e-mail ou senha.",
       });
     }
+
     const accessToken = jwt.sign(
       { email: user.email, permissions: user.permissions },
       process.env.JWT_ACCESS_SECRET,

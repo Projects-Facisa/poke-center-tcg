@@ -11,6 +11,8 @@ import {RiDiscountPercentFill} from "react-icons/ri";
 import ClientsView from "../ClientsView/ClientsView.jsx";
 import UsersView from "../UserView/UsersView.jsx";
 import { FaUserGear, FaUserGroup } from "react-icons/fa6";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Controller() {
   const [view, setView] = useState(1);
@@ -48,6 +50,7 @@ function Controller() {
         >
           <FaUserGear />
         </button>
+        <ToastContainer />
       </div>
       <div id="content">
         {view === 1 ? <Dashboard /> : ""}
