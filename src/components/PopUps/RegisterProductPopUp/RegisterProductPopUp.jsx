@@ -5,21 +5,21 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded }) => {
-const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded }) => {
   const [productQuantity, setProductQuantity] = useState(0);
   const [productPrice, setProductPrice] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] =
-    useState(0);
 
   const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   
   const deferredSearchInput = useDeferredValue(searchInput);
+  const notifySuccess = (message) => toast.success(message);
   
   const cardsContainerRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
+  
 
   const handleClose = () => {
     setProductQuantity(0);
@@ -181,17 +181,12 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded }) => {
                   <input
                     type="text"
                     id="search-input"
-                    onKeyDown={handleSearch}
-                    placeholder="Digite o nome da carta e aperte Enter"
-                  />
-                </div>
-                {/*input-label*/}
 
                     value={searchInput}
                     onChange={handleInputChange}
                     placeholder="Digite o nome da carta"
                   />
-                </div>{/*input-label*/}
+                </div>
         
                 <div className="input-label">
                   <label>Quantidade em Estoque:</label>

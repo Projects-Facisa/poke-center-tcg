@@ -1,0 +1,111 @@
+.userview-header {
+    margin-bottom: 25px;
+}
+
+.container-grid{
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    gap: 15px;
+}
+
+.user-list-grid {
+    width: 100%;
+}
+
+.new-user{
+    width: 100%;
+}
+
+.user-list-grid-header{
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.user-list-grid-body{
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
+    overflow: hidden;
+    overflow-y: scroll;
+    border-radius: 10px;
+        & table {
+        width: 100%;
+        border-collapse: collapse;
+        };
+}
+
+.user-list-grid-body th{
+    background-color: white;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: 600;
+}
+
+.user-list-grid-body th span{
+    color: #333;
+    font-weight: 600;
+}
+
+.user-list-grid table td {
+    height: 40px;
+    padding: 5px;
+    text-align: center;
+    color: #555;
+}
+
+.user-list-grid-body {
+    background-color: white;
+    border: 1px solid rgba(0,0,0,.125);
+    height: 65.5vh;
+    overflow: hidden;
+    overflow-y: scroll;
+        & table {
+        width: 100%;
+        border-collapse: collapse;
+        };
+}
+
+.user-list-grid-body th{
+    background-color: white;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-weight: 600;
+}
+
+.action-dropdownn {
+  display: none;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.icon-list-user {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.profile-avatar img {
+    width: 300px;
+    border-radius: 50%;
+}
+
+
+.user-info-perfil ul {
+    display: grid;
+    grid-template-rows: repeat(3, 80px);
+    list-style-type: none;
+}

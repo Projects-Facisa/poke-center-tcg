@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Table.css";
 import Item from "../components/Item/Item.jsx";
 import SearchBar from "../components/SearchBar/SearchBar.jsx";
-import { IoIosAdd, IoMdArrowUp, IoMdArrowDown } from "react-icons/io";
+import { IoIosAdd, IoMdArrowUp , IoMdArrowDown  } from "react-icons/io";
 import Container from "../components/Container/Container.jsx";
 import RegisterProductPopUp from "../components/PopUps/RegisterProductPopUp/RegisterProductPopUp.jsx";
 
@@ -18,7 +18,7 @@ function Table() {
 
   const handleSort = (column) => {
     if (sortBy === column) {
-      setIsAscending(!isAscending);
+      setIsAscending(!isAscending); 
     } else {
       setSortBy(column);
       setIsAscending(true);
@@ -27,7 +27,7 @@ function Table() {
 
   const renderSortIcon = (column) => {
     if (sortBy === column) {
-      return isAscending ? <IoMdArrowUp /> : <IoMdArrowDown />;
+      return isAscending ? <IoMdArrowUp  /> : <IoMdArrowDown  />;
     }
     return null;
   };
@@ -51,7 +51,7 @@ function Table() {
           </div>
           <div className="table-search-bar">
             {/* <button className="header-btn search-btn">Filtrar</button> */}
-            <SearchBar onSearch={setSearch} />
+            <SearchBar onSearch={setSearch} input={"pesquisar pelo nome da card..."} />
           </div>
         </div>
       </div>
@@ -59,53 +59,39 @@ function Table() {
         <table>
           <thead>
             <tr>
-              <th>ID</th>
               <th>
-                <span
-                  onClick={() => handleSort("name")}
-                  className="clickable-text"
-                >
+                ID
+              </th>
+              <th>
+                <span onClick={() => handleSort("name")} className="clickable-text">
                   Nome da carta {renderSortIcon("name")}
                 </span>
               </th>
               <th>
-                <span
-                  onClick={() => handleSort("category")}
-                  className="clickable-text"
-                >
+                <span onClick={() => handleSort("category")} className="clickable-text">
                   Categoria {renderSortIcon("category")}
                 </span>
               </th>
               <th>
-                <span
-                  onClick={() => handleSort("rarity")}
-                  className="clickable-text"
-                >
+                <span onClick={() => handleSort("rarity")} className="clickable-text">
                   Raridade {renderSortIcon("rarity")}
                 </span>
               </th>
-              <th>Estado do estoque</th>
               <th>
-                <span
-                  onClick={() => handleSort("quantity")}
-                  className="clickable-text"
-                >
+                  Estado do estoque
+              </th>
+              <th>
+                <span onClick={() => handleSort("quantity")} className="clickable-text">
                   Quantidade estoque {renderSortIcon("quantity")}
                 </span>
               </th>
               <th>
-                <span
-                  onClick={() => handleSort("price")}
-                  className="clickable-text"
-                >
+                <span onClick={() => handleSort("price")} className="clickable-text">
                   Preço {renderSortIcon("price")}
                 </span>
               </th>
               <th>
-                <span
-                  onClick={() => handleSort("purchaseDate")}
-                  className="clickable-text"
-                >
+                <span onClick={() => handleSort("purchaseDate")} className="clickable-text">
                   Data de compra {renderSortIcon("purchaseDate")}
                 </span>
               </th>
@@ -113,19 +99,10 @@ function Table() {
             </tr>
           </thead>
           <tbody>
-            <Item
-              searchFilter={search}
-              sortBy={sortBy}
-              isAscending={isAscending}
-              refreshTrigger={refreshTrigger}
-            />
+            <Item searchFilter={search} sortBy={sortBy} isAscending={isAscending} refreshTrigger={refreshTrigger} />
           </tbody>
         </table>
-        <RegisterProductPopUp
-          isOpen={isPopUpOpen}
-          onClose={closePopUp}
-          onProductAdded={refreshTable}
-        />
+        <RegisterProductPopUp isOpen={isPopUpOpen} onClose={closePopUp} onProductAdded={refreshTable} />
       </div>
     </Container>
   );
