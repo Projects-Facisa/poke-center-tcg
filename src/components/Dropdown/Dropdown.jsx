@@ -12,6 +12,7 @@ const Dropdown = () => {
   const [imageProfile, SetimageProfile] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [username, setUsername] = useState("");
+  const [role, setRole] = useState("");
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -23,6 +24,14 @@ const Dropdown = () => {
       setUsername(storedUsername);
     }
   }, []);
+
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    if (storedRole) {
+      setRole(storedRole);
+    }
+  }, []);
+
 
 
   useEffect(() => {
@@ -91,7 +100,10 @@ const Dropdown = () => {
       <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
         <h3>
           {username || "Usuário"}
+          <br />
+          <span>{role}</span>
         </h3>
+        
         <ul>
           <li className="dropdown-item" onClick={() => handleSetView(5)}>
             <span>
