@@ -16,7 +16,7 @@ const router = express.Router();
 router.get("/listall", getAllUsers);
 router.get("/listone/:code", getOneUser);
 
-router.put("/atualizar/:code", updateUser);
+router.put("/atualizar/:id", updateUser);
 
 router.post("/funcionario", registerFuncionario);
 router.post("/register", registerUser);

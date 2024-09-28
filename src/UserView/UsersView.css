@@ -99,10 +99,10 @@
 
 .user-photo-perfil {
     position: relative;
-    width: 320px; /* ajuste conforme necessário */
-    height: 320px; /* ajuste conforme necessário */
-    overflow: hidden; /* Garante que o overlay não ultrapasse os limites */
-    border-radius: 50%; /* Se desejar uma imagem circular */
+    width: 320px;
+    height: 320px;
+    overflow: hidden; 
+    border-radius: 50%; 
 }
 
 .profile-avatar img {
@@ -177,6 +177,10 @@
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    max-width: 600px;
+    background-color: #f9f9f9;
+    padding: 10px 0;
+    border-radius: 15px;
 }
 
 .user-perfil-grid h3 {

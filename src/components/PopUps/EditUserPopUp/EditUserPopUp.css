@@ -1,0 +1,10 @@
+.form-group select {
+    width: calc(100% - 22px);
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-group {
+    margin-bottom: 11px;
+}

@@ -179,44 +179,48 @@ export const getOneUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-  const { code } = req.params;
-  const { name, newEmail, password, image } = req.body;
+  const { id } = req.params;
+  const { name, newEmail, role, password, image } = req.body;
 
   try {
-    const user = await User.findOne({ code });
-
-    if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
+    if (!name && !newEmail && !role && !password && !image) {
+      return res.status(400).json({ error: "Pelo menos um campo deve ser fornecido para atualização." });
     }
 
-    if (name) user.name = name;
+    const updateData = {};
+
+    if (name) updateData.name = name;
     if (newEmail) {
       const emailExists = await User.findOne({ email: newEmail });
-      if (emailExists && emailExists.email !== email) {
+      if (emailExists && emailExists._id.toString() !== id) {
         return res.status(400).json({ error: "Este e-mail já está em uso." });
       }
-      user.email = newEmail;
+      updateData.email = newEmail;
     }
     if (password) {
       const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+      updateData.password = await bcrypt.hash(password, salt);
     }
-    if (image) user.image = image;
+    if (role) updateData.role = role;
+    if (image) updateData.image = image;
 
-    const updatedUser = await user.save();
+    const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
 
     res.status(200).json({
       message: "Usuário atualizado com sucesso.",
       user: {
         name: updatedUser.name,
         email: updatedUser.email,
+        role: updatedUser.role,
         image: updatedUser.image,
       },
     });
   } catch (error) {
-    res.status(500).json({
-      error: "Ocorreu um erro ao atualizar o usuário. Tente novamente mais tarde.",
-    });
+    res.status(500).json({ error: "Ocorreu um erro ao atualizar o usuário. Tente novamente mais tarde." });
   }
 };
 

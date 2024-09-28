@@ -4,8 +4,8 @@ import "./UsersView.css";
 import axios from "axios";
 import { IoIosAdd, IoIosMore, IoMdArrowDown, IoMdArrowUp} from "react-icons/io";
 import DefaultImage from "../assets/user-profile.png";
-import RegisterUserPopUp from "../components/PopUps/RegisterUserPopUp/RegisterUserPopUp.jsx"
-import EditUserPopUp from "../components/PopUps/EditUserPopUp/EditUserPopUp.jsx"
+import RegisterUserPopUp from "../components/PopUps/RegisterUserPopUp/RegisterUserPopUp.jsx";
+import EditUserPopUp from "../components/PopUps/EditUserPopUp/EditUserPopUp.jsx";
 import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
 import SearchBar from "../components/SearchBar/SearchBar.jsx";
 import ProfileImageUploader from "../components/ProfileImageUploader/ProfileImageUploader.jsx";
@@ -70,8 +70,7 @@ function ViewUsers(refreshTrigger) {
     document.addEventListener("mousedown", handler);
   }, [refreshTrigger]);
   
-  useEffect(() => {
-  }, [users]);
+  useEffect(() => {}, [users]);
 
   useEffect(() => {
     fetchUserLoggedIn();
@@ -85,8 +84,7 @@ function ViewUsers(refreshTrigger) {
     document.addEventListener("mousedown", handler);
   }, [refreshTrigger]);
   
-  useEffect(() => {
-  }, [setUserLoggedIn]);
+  useEffect(() => {}, [setUserLoggedIn]);
 
   const handlePopUp = (userID, pop) => {
     setPopView(pop);
@@ -108,7 +106,6 @@ function ViewUsers(refreshTrigger) {
   const fetchUserLoggedIn = async () => {
     try {
       const code = localStorage.getItem("code");
-      
       const response = await axios.get(`http://localhost:5000/api/users/listone/${code}`);
       
       if (response.data && response.data.content) {
@@ -133,13 +130,12 @@ function ViewUsers(refreshTrigger) {
     }
   };
 
-    useEffect(() => {
-      fetchUsers();
+  useEffect(() => {
+    fetchUsers();
   }, []);
 
-
   const refreshTable = () => {
-      fetchUsers();
+    fetchUsers();
   };
 
   const sortedUsers = users.sort((a, b) => {
@@ -157,10 +153,9 @@ function ViewUsers(refreshTrigger) {
     setOpenMenuId(openMenuId === id ? null : id);
   };
 
-
   const updateUser = async (id, updatedData) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/users/atualizar/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -168,11 +163,11 @@ function ViewUsers(refreshTrigger) {
         body: JSON.stringify(updatedData),
       });
       if (!response.ok) {
-        throw new Error("Failed to update Client");
+        throw new Error("Falha ao atualizar o usuário");
       }
       fetchUsers();
     } catch (error) {
-      console.error("Error updating Client:", error);
+      console.error("Erro ao atualizar o usuário:", error);
     }
   };
 
@@ -192,121 +187,98 @@ function ViewUsers(refreshTrigger) {
 
   return (
     <Container>
-      <div className="userview-header">
-        <h1>Visualização de Funcionarios</h1>
-      </div>
       <div className="container-grid">
-        <div className="user-list-grid">
-          <div className="user-list-grid-header">
-            <div className="new-user">
-              <button className="header-btn"
-                onClick={openPopUp}>
-                  Add Funcionario
-                <span>
-                  <IoIosAdd />
-                </span>
-              </button>
+        {userLoggedIn && userLoggedIn.role === "Admin" && (
+          <div className="user-list-grid">
+            <div className="userview-header">
+              <h1>Visualização de Funcionarios</h1>
             </div>
-            <SearchBar input={"pesquisar um funcionario..."}/>
-          </div>
-          <div className="user-list-grid-body">
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    <span >
-                      code 
-                    </span>
-                  </th>
-                  <th>
-                    
-                  </th>
-                  <th className="text-left">
-                    <span>
-                      Nome 
-                    </span>
-                  </th>
-                  <th className="text-left">
-                    <span>
-                      Email
-                    </span>
-                  </th>
-                  <th className="text-left">
-                    <span>
-                      Funcao
-                    </span>
-                  </th>
-                  <th>
-                    <span>ação</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedUsers.map((user) => (
-                  <tr key={user._id}>
-                    <td>{user.code ? user.code : ""}</td>
-                    <td><img className="icon-list-user" src={user.image ? user.image : DefaultImage} alt="" /></td>
-                    <td className="text-left">{user.name}</td>
-                    <td className="text-left">{user.email}</td>
-                    <td className="text-left">{user.role ? user.role : "Funcionario" }</td>
-                    <td>
-                    <div className="action-menu" ref={actionMenuRef} >
-                      <button className="action-btn"  onClick={() => toggleMenu(user._id)}>
-                        <IoIosMore />
-                      </button>
-                      {openMenuId === user._id && (
-                        <div className="action-dropdown" ref={actionMenuRef}>
-                          <button onClick={() => handlePopUp(user._id, 1)}> Edit </button>
-                          <button onClick={() => handlePopUp(user._id, 2)}> Delete </button>
-                        </div>
-                      )}
-                    </div>
-                    </td>
+            <div className="user-list-grid-header">
+              <div className="new-user">
+                <button className="header-btn" onClick={openPopUp}>
+                  Add Funcionario
+                  <span><IoIosAdd /></span>
+                </button>
+              </div>
+              <SearchBar input={"pesquisar um funcionario..."} />
+            </div>
+            <div className="user-list-grid-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>code</th>
+                    <th></th>
+                    <th className="text-left">Nome</th>
+                    <th className="text-left">Email</th>
+                    <th className="text-left">Funcao</th>
+                    <th>ação</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sortedUsers.map((user) => (
+                    <tr key={user._id}>
+                      <td>{user.code ? user.code : ""}</td>
+                      <td><img className="icon-list-user" src={user.image ? user.image : DefaultImage} alt="" /></td>
+                      <td className="text-left">{user.name}</td>
+                      <td className="text-left">{user.email}</td>
+                      <td className="text-left">{user.role ? user.role : "Funcionario"}</td>
+                      <td>
+                        <div className="action-menu" ref={actionMenuRef}>
+                          <button className="action-btn" onClick={() => toggleMenu(user._id)}>
+                            <IoIosMore />
+                          </button>
+                          {openMenuId === user._id && (
+                            <div className="action-dropdown" ref={actionMenuRef}>
+                              <button onClick={() => handlePopUp(user._id, 1)}> Edit </button>
+                              <button onClick={() => handlePopUp(user._id, 2)}> Delete </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
+  
         <div className="user-perfil-grid">
-            <h3>PERFIL DE USUARIO</h3>
-            <div className="user-photo-perfil">
-              <div className="profile-avatar">
-                  <ProfileImageUploader
-                      imageProfile={imageProfile}
-                      setImageProfile={setImageProfile}
-                      fileInputRef={fileInputRef}
-                      modalIsOpen={modalIsOpen}
-                      handleOpenModal={handleOpenModal}
-                      handleCloseModal={handleCloseModal}
-                  />
-                  <div className="overlay-profile">
-                      <span className="texto">Alterar foto do perfil</span>
-                  </div>
+          <h3>PERFIL DE USUARIO</h3>
+          <div className="user-photo-perfil">
+            <div className="profile-avatar">
+              <ProfileImageUploader
+                imageProfile={imageProfile}
+                setImageProfile={setImageProfile}
+                fileInputRef={fileInputRef}
+                modalIsOpen={modalIsOpen}
+                handleOpenModal={handleOpenModal}
+                handleCloseModal={handleCloseModal}
+              />
+              <div className="overlay-profile">
+                <span className="texto">Alterar foto do perfil</span>
               </div>
             </div>
+          </div>
           <div className="user-info-perfil">
             {userLoggedIn ? (
               <ul>
-                <label htmlFor="">
-                  nome
-                <li>
-                  <div>{userLoggedIn.name}</div>
-                  <div className="icon"><MdOutlineEdit /></div>
-                </li>
-                </label>
-                <label htmlFor="">
-                  e-mail
-                <li>
-                  <div>{userLoggedIn.email}</div>
-                  <div className="icon"><MdOutlineEdit /></div>
+                <label htmlFor="">nome
+                  <li>
+                    <div>{userLoggedIn.name}</div>
+                    <div className="icon"><MdOutlineEdit /></div>
                   </li>
                 </label>
-                <label htmlFor="">
-                  senha
-                <li>
-                  <div>**************</div>
-                  <div className="icon"><MdOutlineEdit /></div>
+                <label htmlFor="">e-mail
+                  <li>
+                    <div>{userLoggedIn.email}</div>
+                    <div className="icon"><MdOutlineEdit /></div>
+                  </li>
+                </label>
+                <label htmlFor="">senha
+                  <li>
+                    <div>**************</div>
+                    <div className="icon"><MdOutlineEdit /></div>
                   </li>
                 </label>
               </ul>
@@ -315,31 +287,34 @@ function ViewUsers(refreshTrigger) {
             )}
           </div>
         </div>
-        <RegisterUserPopUp 
-          isOpen={isPopUpOpen && popView === ""} 
-          onClose={closePopUp} 
-          onUserAdded={refreshTable} 
+  
+        <RegisterUserPopUp
+          isOpen={isPopUpOpen && popView === ""}
+          onClose={closePopUp}
+          onUserAdded={refreshTable}
         />
+  
+        {popView === 1 && (
+          <EditUserPopUp
+            isOpen={isPopUpOpen}
+            onClose={closePopUp}
+            updateUser={updateUser}
+            users={users}
+            userID={userID}
+          />
+        )}
+        {popView === 2 && (
+          <DeletePopUp
+            isOpen={isPopUpOpen}
+            onClose={closePopUp}
+            deleteObject={deleteUser}
+            itemID={userID}
+          />
+        )}
       </div>
-      {popView === 1 ? (
-        <EditUserPopUp
-          isOpen={isPopUpOpen}
-          onClose={closePopUp}
-          updateUser={updateUser}
-          user={users}
-          userID={userID}
-        />
-      ) : null}
-      {popView === 2 ? (
-        <DeletePopUp
-          isOpen={isPopUpOpen}
-          onClose={closePopUp}
-          deleteObject={deleteUser}
-          itemID={clientID}
-        />
-      ) : null}
     </Container>
   );
-}
+  
+}  
 
 export default ViewUsers;
