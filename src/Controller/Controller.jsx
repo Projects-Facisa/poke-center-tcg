@@ -14,20 +14,20 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Controller() {
   const [view, setView] = useState(1);
-  const [roleLogged, setRoleLogged] = useState(null); // Estado para armazenar o roleLogged
+  const [roleLogged, setRoleLogged] = useState(null);
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
     setRoleLogged(storedRole);
-    console.log(roleLogged)
+    console.log(roleLogged);
 
     if (storedRole && storedRole !== "Admin") {
-      setView(2); 
+      setView(2);
     }
   }, []);
 
   if (roleLogged === null) {
-    return null; // Enquanto carrega, não renderiza nada ou um spinner
+    return null;
   }
 
   if (roleLogged === "Admin") {

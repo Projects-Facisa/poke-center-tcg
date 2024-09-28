@@ -1,18 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import ProfileImageUploader from "../ProfileImageUploader/ProfileImageUploader";
-import { CiImageOn, CiLogout } from "react-icons/ci";
+import React, { useContext, useRef, useEffect, useState } from "react";
+import { CiLogout } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Dropdown.css";
+import DefaultImage from "../../assets/user-profile.png";
+import { ProfileContext } from "../ProfileImageUploader/ProfileContext";
 
 const Dropdown = () => {
+  const { imageProfile } = useContext(ProfileContext);
   const [open, setOpen] = useState(false);
-  const [imageProfile, SetimageProfile] = useState("");
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [username, setUsername] = useState("");
-  const fileInputRef = useRef(null);
   const navigate = useNavigate();
-
   let menuRef = useRef();
 
   useEffect(() => {
@@ -22,37 +20,20 @@ const Dropdown = () => {
     }
   }, []);
 
-
   useEffect(() => {
     let handler = (e) => {
       if (!menuRef.current.contains(e.target)) {
         setOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handler);
     return () => {
       document.removeEventListener("mousedown", handler);
     };
-  });
-  useEffect(() => {
-    const storedImage = localStorage.getItem("profileImage");
-    if (storedImage) {
-      SetimageProfile(storedImage);
-    }
   }, []);
+
   const toggleDropdown = () => {
-    if (!modalIsOpen) {
-      setOpen(!open);
-    }
-  };
-
-  const handleOpenModal = () => {
-    setModalIsOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setModalIsOpen(false);
+    setOpen(!open);
   };
 
   const handleLogout = async () => {
@@ -71,27 +52,16 @@ const Dropdown = () => {
   return (
     <div className="dropdown-container" ref={menuRef}>
       <div className="dropdown-trigger" onClick={toggleDropdown}>
-        <ProfileImageUploader
-          imageProfile={imageProfile}
-          SetimageProfile={SetimageProfile}
-          fileInputRef={fileInputRef}
-          modalIsOpen={modalIsOpen}
-          handleOpenModal={handleOpenModal}
-          handleCloseModal={handleCloseModal}
+        <img
+          src={imageProfile || DefaultImage}
+          alt="Profile"
+          className="profile-image"
         />
       </div>
 
       <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
-        <h3>
-          {username || "Usuário"}
-        </h3>
+        <h3>{username || "Usuário"}</h3>
         <ul>
-          <li className="dropdown-item">
-            <span>
-              <CiImageOn />
-            </span>
-            <a onClick={() => fileInputRef.current.click()}>Mudar imagem</a>
-          </li>
           <li className="dropdown-item" onClick={handleLogout}>
             <span>
               <CiLogout />

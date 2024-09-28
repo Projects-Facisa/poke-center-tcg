@@ -41,11 +41,12 @@ const customStyles = {
 
 const ProfileImageUploader = ({
   imageProfile,
-  SetimageProfile,
+  setImageProfile,
   fileInputRef,
   modalIsOpen,
   handleOpenModal,
   handleCloseModal,
+  onProfileImageUpdate,
 }) => {
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
@@ -104,7 +105,7 @@ const ProfileImageUploader = ({
       convertToPixelCrop(crop, imgRef.current.width, imgRef.current.height)
     );
 
-    SetimageProfile(base64Image);
+    setImageProfile(base64Image);
 
     try {
       await axios.post(
@@ -113,16 +114,16 @@ const ProfileImageUploader = ({
         { withCredentials: true }
       );
       localStorage.setItem("profileImage", base64Image);
+
+      onProfileImageUpdate(base64Image);
+
       console.log("Imagem atualizada com sucesso");
     } catch (error) {
-      const base64Image = previewCanvasRef.current.toDataURL();
-      console.log(`Tamanho da imagem base64: ${base64Image.length} bytes`);
       console.error("Erro ao atualizar a imagem:", error);
     }
 
     handleCloseModal();
   };
-
   return (
     <>
       <input
