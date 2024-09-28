@@ -196,7 +196,7 @@ function ViewUsers(refreshTrigger) {
             <div className="user-list-grid-header">
               <div className="new-user">
                 <button className="header-btn" onClick={openPopUp}>
-                  Add Funcionario
+                  Cadastrar Funcionario
                   <span><IoIosAdd /></span>
                 </button>
               </div>

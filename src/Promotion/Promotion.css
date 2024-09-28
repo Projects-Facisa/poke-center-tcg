@@ -31,7 +31,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 240px;
     height: 50px;
     font-size: 18px;
     background-color: #757576;
@@ -68,10 +67,9 @@
     };
 }
 
-.item-table th,
-.item-table th span {
+th{
     background-color: white;
-    padding: 15px;
+    padding: 12px;
     border-bottom: 1px solid #ddd;
     color: #333;
     position: sticky;

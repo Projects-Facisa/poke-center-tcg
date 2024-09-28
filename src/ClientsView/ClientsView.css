@@ -41,16 +41,7 @@
         };
 }
 
-.client-grid-body th{
-    background-color: white;
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-    color: #333;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    font-weight: 600;
-}
+
 
 .client-grid-body th span{
     color: #333;
@@ -132,16 +123,6 @@
         };
 }
 
-.client-grid-body th{
-    background-color: white;
-    padding: 15px;
-    border-bottom: 1px solid #ddd;
-    color: #333;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    font-weight: 600;
-}
 
 .action-dropdownn {
   display: none;

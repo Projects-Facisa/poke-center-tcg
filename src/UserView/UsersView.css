@@ -3,6 +3,7 @@
 }
 
 .container-grid{
+    min-height: 700px;
     display: grid;
     grid-template-columns: 7fr 3fr;
     gap: 15px;
@@ -43,47 +44,43 @@
     border-radius: 10px;
 }
 
-.user-list-grid-body tbody tr:hover{
+ tbody tr:hover{
     background-color: #0000000b;
 }
 
-.user-list-grid-body table {
+ table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.user-list-grid-body::-webkit-scrollbar{
+.user-list-grid-body::-webkit-scrollbar,
+.item-table::-webkit-scrollbar,
+.client-grid-body::-webkit-scrollbar{
     width: 0.5rem;
     height: 0.5rem;
 }
 
-.user-list-grid-body::-webkit-scrollbar-thumb{
+.user-list-grid-body::-webkit-scrollbar-thumb,
+.item-table::-webkit-scrollbar-thumb,
+.client-grid-body::-webkit-scrollbar-thumb{
     border-radius: 0.5rem;
     background-color: #dad8db;
     visibility: hidden;
 }
 
-.user-list-grid-body:hover::-webkit-scrollbar-thumb{
+.user-list-grid-body:hover::-webkit-scrollbar-thumb,
+.item-table:hover::-webkit-scrollbar-thumb,
+.client-grid-body:hover::-webkit-scrollbar-thumb{
     visibility: visible;
 }
 
-.user-list-grid-body th{
-    background-color: white;
-    border-bottom: 1px solid #ddd;
-    color: #333;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    font-weight: 600;
-}
 
-.user-list-grid-body table th,
-.user-list-grid-body table td{
+table td{
     padding: 8px;
     text-align: center;
 }
 
-.user-list-grid table .text-left {
+table .text-left {
     text-align: left;
 }
 
@@ -181,6 +178,7 @@
     background-color: #f9f9f9;
     padding: 10px 0;
     border-radius: 15px;
+    height: 100%;
 }
 
 .user-perfil-grid h3 {
