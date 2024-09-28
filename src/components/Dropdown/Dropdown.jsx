@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import ProfileImageUploader from "../ProfileImageUploader/ProfileImageUploader";
-import { CiImageOn, CiLogout } from "react-icons/ci";
+import { CiSettings, CiLogout } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Dropdown.css";
+import { useView } from "../../Controller/ViewContext.jsx";
 
 const Dropdown = () => {
+  const { setView } = useView();
   const [open, setOpen] = useState(false);
   const [imageProfile, SetimageProfile] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -68,6 +70,11 @@ const Dropdown = () => {
     }
   };
 
+  const handleSetView = (viewNumber) => {
+    setView(viewNumber);
+    setOpen(false);
+  };
+
   return (
     <div className="dropdown-container" ref={menuRef}>
       <div className="dropdown-trigger" onClick={toggleDropdown}>
@@ -86,11 +93,11 @@ const Dropdown = () => {
           {username || "Usuário"}
         </h3>
         <ul>
-          <li className="dropdown-item">
+          <li className="dropdown-item" onClick={() => handleSetView(5)}>
             <span>
-              <CiImageOn />
+              <CiSettings />
             </span>
-            <a onClick={() => fileInputRef.current.click()}>Mudar imagem</a>
+            <a>Configurações</a>
           </li>
           <li className="dropdown-item" onClick={handleLogout}>
             <span>
