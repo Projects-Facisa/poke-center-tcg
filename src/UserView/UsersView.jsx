@@ -195,7 +195,7 @@ function ViewUsers(refreshTrigger) {
             </div>
             <div className="user-list-grid-header">
               <div className="new-user">
-                <button className="header-btn" onClick={openPopUp}>
+                <button className="header-btn" onClick={() => handlePopUp("", 0)}>
                   Cadastrar Funcionario
                   <span><IoIosAdd /></span>
                 </button>
@@ -288,11 +288,13 @@ function ViewUsers(refreshTrigger) {
           </div>
         </div>
   
+        {popView === 0 && (
         <RegisterUserPopUp
-          isOpen={isPopUpOpen && popView === ""}
+          isOpen={isPopUpOpen}
           onClose={closePopUp}
           onUserAdded={refreshTable}
         />
+      )}
   
         {popView === 1 && (
           <EditUserPopUp
