@@ -1,81 +1,79 @@
 .status {
-    padding: 6.5px 10px;
-    border-radius: 2px;
-    font-size: 14px;
-    font-weight: 500;
-    display: inline-block;
-    width: 130px;
-    color: #fff;
+  padding: 6.5px 10px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  display: inline-block;
+  width: 140px;
+  color: #fff;
 }
 
 .card-icon {
-    aspect-ratio: initial;
-    width: 75px;
-    object-fit: cover;
+  aspect-ratio: initial;
+  width: 75px;
+  object-fit: cover;
 }
 
 .em-estoque {
-    background-color: #9fba97;
-    color: #528844;
+  background-color: #9fba97;
+  color: #528844;
 }
 
 .baixo-estoque {
-    background-color: #fdd39c;
-    color: #c77415;
+  background-color: #fdd39c;
+  color: #c77415;
 }
 
 .sem-estoque {
-    background-color: #dad8db;
-    color: #5d565f;
+  background-color: #dad8db;
+  color: #5d565f;
 }
 
 .action-menu {
-    position: relative;
+  position: relative;
 }
 
 .action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-    color: #555;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #555;
 }
 
 .action-dropdown {
-    position: absolute;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    z-index: 10;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
 .action-dropdown button {
-    display: block;
-    width: 100%;
-    padding: 8px 16px;
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 .action-dropdown button:hover {
-    background-color: var(--lightgrey);
+  background-color: var(--lightgrey);
 }
 
-
-
 .item-table td {
-    padding: 15px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-    color: #555;
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  color: #555;
 }
 
 .new-price {
-    color: green;
+  color: green;
 }

@@ -11,7 +11,7 @@ import UsersView from "../UserView/UsersView.jsx";
 import { FaUserGear, FaUserGroup } from "react-icons/fa6";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ViewProvider, useView } from '../Controller/ViewContext.jsx';
+import { ViewProvider, useView } from "../Controller/ViewContext.jsx";
 
 function ControllerContent() {
   const { view, setView } = useView();
@@ -20,8 +20,10 @@ function ControllerContent() {
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
     setRoleLogged(storedRole);
+    console.log(roleLogged);
 
     if (storedRole && storedRole !== "Admin") {
+      setView(2);
       setView(2);
     }
   }, [setView]);
@@ -32,12 +34,18 @@ function ControllerContent() {
 
   const renderContent = () => {
     switch (view) {
-      case 1: return <Dashboard />;
-      case 2: return <Table />;
-      case 3: return <Promotion />;
-      case 4: return <ClientsView />;
-      case 5: return <UsersView />;
-      default: return null;
+      case 1:
+        return <Dashboard />;
+      case 2:
+        return <Table />;
+      case 3:
+        return <Promotion />;
+      case 4:
+        return <ClientsView />;
+      case 5:
+        return <UsersView />;
+      default:
+        return null;
     }
   };
 
@@ -45,31 +53,72 @@ function ControllerContent() {
     return (
       <div id="controller">
         <div id="side-bar">
-          <button onClick={() => setView(1)} className={view === 1 ? "active" : ""}><MdHome /></button>
-          <button onClick={() => setView(2)} className={view === 2 ? "active" : ""}><BiSolidDashboard /></button>
-          <button onClick={() => setView(3)} className={view === 3 ? "active" : ""}><RiDiscountPercentFill /></button>
-          <button onClick={() => setView(4)} className={view === 4 ? "active" : ""}><FaUserGroup /></button>
-          <button onClick={() => setView(5)} className={view === 5 ? "active" : ""}><FaUserGear /></button>
+          <button
+            onClick={() => setView(1)}
+            className={view === 1 ? "active" : ""}
+          >
+            <MdHome />
+          </button>
+          <button
+            onClick={() => setView(2)}
+            className={view === 2 ? "active" : ""}
+          >
+            <BiSolidDashboard />
+          </button>
+          <button
+            onClick={() => setView(3)}
+            className={view === 3 ? "active" : ""}
+          >
+            <RiDiscountPercentFill />
+          </button>
+          <button
+            onClick={() => setView(4)}
+            className={view === 4 ? "active" : ""}
+          >
+            <FaUserGroup />
+          </button>
+          <button
+            onClick={() => setView(5)}
+            className={view === 5 ? "active" : ""}
+          >
+            <FaUserGear />
+          </button>
           <ToastContainer />
         </div>
-        <div id="content">
-          {renderContent()}
-        </div>
+        <div id="content">{renderContent()}</div>
       </div>
     );
   } else {
     return (
       <div id="controller">
         <div id="side-bar">
-          <button onClick={() => setView(2)} className={view === 2 ? "active" : ""}><BiSolidDashboard /></button>
-          <button onClick={() => setView(3)} className={view === 3 ? "active" : ""}><RiDiscountPercentFill /></button>
-          <button onClick={() => setView(4)} className={view === 4 ? "active" : ""}><FaUserGroup /></button>
-          <button onClick={() => setView(5)} className={view === 5 ? "active" : ""}><FaUserGear /></button>
+          <button
+            onClick={() => setView(2)}
+            className={view === 2 ? "active" : ""}
+          >
+            <BiSolidDashboard />
+          </button>
+          <button
+            onClick={() => setView(3)}
+            className={view === 3 ? "active" : ""}
+          >
+            <RiDiscountPercentFill />
+          </button>
+          <button
+            onClick={() => setView(4)}
+            className={view === 4 ? "active" : ""}
+          >
+            <FaUserGroup />
+          </button>
+          <button
+            onClick={() => setView(5)}
+            className={view === 5 ? "active" : ""}
+          >
+            <FaUserGear />
+          </button>
           <ToastContainer />
         </div>
-        <div id="content">
-          {renderContent()}
-        </div>
+        <div id="content">{renderContent()}</div>
       </div>
     );
   }

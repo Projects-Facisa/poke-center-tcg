@@ -3,7 +3,7 @@ import Login from "./Login/Login.jsx";
 import Controller from "./Controller/Controller.jsx";
 import "./App.css";
 import ProtectedRoute from "./components/protectedRoute/protectedRoute.jsx";
-
+import { ProfileProvider } from "./components/ProfileImageUploader/ProfileContext.jsx";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -13,7 +13,9 @@ function AppRoutes() {
           path="/Admin"
           element={
             <ProtectedRoute>
-              <Controller />
+              <ProfileProvider>
+                <Controller />
+              </ProfileProvider>
             </ProtectedRoute>
           }
         />
