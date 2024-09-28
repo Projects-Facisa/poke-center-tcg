@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import "./RegisterUserPopUp.css";
 
-const RegisterClientPopUp = ({ isOpen, onClose, onClientAdded }) => {
-    const [clientName, setClientName] = useState("");
-    const [clientAge, setClientAge] = useState("");
-    const [clientEmail, setClientEmail] = useState("");
+const RegisterUserPopUp = ({ isOpen, onClose, onUserAdded }) => {
+    const [userName, setUserName] = useState("");
+    const [userEmail, setUserEmail] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleClose = () => {
-        setClientName("");
-        setClientAge("");
-        setClientEmail("");
+        setUserName("");
+        setUserEmail("");
         setErrorMessage("");
         onClose();
     };
@@ -19,45 +17,44 @@ const RegisterClientPopUp = ({ isOpen, onClose, onClientAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!clientName || clientAge < 0 || !clientEmail || !isNaN(clientName[0])) {
+        if (!userName || !userEmail || !isNaN(userName[0])) {
             setErrorMessage("Por favor, preencha todos os campos corretamente.");
             return;
         }
 
         try {
-            const newClient = {
-                name: clientName,
-                age: new Date(clientAge),
-                email: clientEmail
+            const newUser = {
+                name: userName,
+                email: userEmail
             };
 
-            await onClientAdded(newClient);
+            await onUserAdded(newUser);
             handleClose();
 
-            const addClientResponse = await fetch("http://localhost:5000/add-client", {
+            const addUserResponse = await fetch("http://localhost:5000/api/users/funcionario", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    name: newClient.name,
-                    born: newClient.age,
-                    email: newClient.email
+                    name: newUser.name,
+                    email: newUser.email
                 }),
             });
 
-            const result = await addClientResponse.json();
+            const result = await addUserResponse.json();
 
-            if (!addClientResponse.ok) {
-                throw new Error(result.error || "Erro ao adicionar Cliente.");
+            if (!addUserResponse.ok) {
+                throw new Error(result.error || "Erro ao adicionar Usuário.");
             }
 
             console.log(result.message);
-            onClientAdded();
+            console.log("Senha gerada: ", result.generatedPassword); // Mostra a senha gerada
+            onUserAdded();
             handleClose();
 
         } catch (error) {
-            console.error("Erro ao cadastrar cliente:", error.message);
+            console.error("Erro ao cadastrar usuário:", error.message);
             setErrorMessage(error.message);
         }
     };
@@ -66,33 +63,23 @@ const RegisterClientPopUp = ({ isOpen, onClose, onClientAdded }) => {
     return (
         <div className="popup-overlay">
             <div className="popup-content edit">
-                <h2>Cadastrar Cliente</h2>
+                <h2>Cadastrar Usuário</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label>Nome:</label>
                         <input
                             type="text"
-                            value={clientName}
-                            onChange={(e) => setClientName(e.target.value)}
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
                             required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Idade:</label>
-                        <input
-                            type="date"
-                            value={clientAge}
-                            onChange={(e) => setClientAge(e.target.value)}
-                            required
-                            min="0"
                         />
                     </div>
                     <div className="form-group">
                         <label>E-mail:</label>
                         <input
                             type="email"
-                            value={clientEmail}
-                            onChange={(e) => setClientEmail(e.target.value)}
+                            value={userEmail}
+                            onChange={(e) => setUserEmail(e.target.value)}
                             required
                         />
                     </div>
@@ -109,4 +96,4 @@ const RegisterClientPopUp = ({ isOpen, onClose, onClientAdded }) => {
     );
 };
 
-export default RegisterClientPopUp;
+export default RegisterUserPopUp;

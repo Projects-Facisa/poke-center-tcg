@@ -108,7 +108,6 @@ function ViewUsers(refreshTrigger) {
   const fetchUserLoggedIn = async () => {
     try {
       const code = localStorage.getItem("code");
-      console.log("Procurando usuario com o code:", code);
       
       const response = await axios.get(`http://localhost:5000/api/users/listone/${code}`);
       
@@ -316,7 +315,11 @@ function ViewUsers(refreshTrigger) {
             )}
           </div>
         </div>
-        <RegisterUserPopUp isOpen={isPopUpOpen && popView === ""} onClose={closePopUp} onClientAdded={refreshTable} />
+        <RegisterUserPopUp 
+          isOpen={isPopUpOpen && popView === ""} 
+          onClose={closePopUp} 
+          onUserAdded={refreshTable} 
+        />
       </div>
       {popView === 1 ? (
         <EditUserPopUp

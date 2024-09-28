@@ -92,6 +92,7 @@ export const loginUser = async (req, res) => {
       name: user.name,
       image: user.image,
       code: user.code,
+      role: user.role,
       message: "Login realizado com sucesso.",
     });
   } catch (error) {
@@ -240,11 +241,11 @@ export const deleteUser = async (req, res) => {
 };
 
 export const registerFuncionario = async (req, res) => {
-  const { name, email, password, image } = req.body;
+  const { name, email, image } = req.body;
 
   console.log("Dados recebidos no register:", req.body);
 
-  if (!name || !email || !password) {
+  if (!name || !email) {
     return res
       .status(400)
       .json({ error: "Preencha todos os campos obrigatórios." });
@@ -257,8 +258,10 @@ export const registerFuncionario = async (req, res) => {
       return res.status(400).json({ error: "Este e-mail já está registrado." });
     }
 
+    const firstName = name.split(" ")[0];
+    const rawPassword = `${firstName}123`;
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(rawPassword, salt);
 
     const newUser = await User.create({
       name,
