@@ -76,7 +76,6 @@ const Dropdown = () => {
       </div>
 
       <div className={`dropdown-menu ${open ? "active" : "inactive"}`}>
-        <h3>{username || "Usuário"}</h3>
         <h3>
           {username || "Usuário"}
           <br />
