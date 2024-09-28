@@ -85,12 +85,13 @@ const LoginComponent = () => {
         password: password.value,
       });
 
-      const { login, image, name } = result.data;
+      const { login, image, name, code } = result.data;
 
       if (login) {
         notifySuccess("Login bem-sucedido!");
         localStorage.setItem("username", name);
         localStorage.setItem("profileImage", image);
+        localStorage.setItem("code", code);
         navigate("/Admin", { replace: true });
       } else {
         notifyError("Dados incorretos. Tente novamente.");

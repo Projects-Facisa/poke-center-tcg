@@ -7,16 +7,16 @@ import {
   getAllUsers,
   registerFuncionario,
   updateUser,
+  getOneUser,
 } from "../controllers/authController.js";
 import { verifyUser } from "../middleware/authMiddleware.js";
-import { getOneClient } from "../controllers/ClientController.js";
 
 const router = express.Router();
 
 router.get("/listall", getAllUsers);
-router.get("listone", getOneClient);
+router.get("/listone/:code", getOneUser);
 
-router.put("/atualizar", updateUser);
+router.put("/atualizar/:code", updateUser);
 
 router.post("/funcionario", registerFuncionario);
 router.post("/register", registerUser);

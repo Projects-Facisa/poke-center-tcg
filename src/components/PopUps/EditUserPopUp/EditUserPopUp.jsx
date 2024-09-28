@@ -2,28 +2,24 @@ import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import "./EditUserPopUp.css";
 
-const EditClientPopUp = ({ isOpen, onClose, onClientAdded, clients, clientID, updateClient}) => {
-    const [clientName, setClientName] = useState("");
-    const [clientAge, setClientAge] = useState("");
-    const [clientEmail, setClientEmail] = useState("");
-    const [clientPurchases, setClientPurchases] = useState(null);
+const EditUserPopUp = ({ isOpen, onClose, onUserAdded, users, userID, updateUser}) => {
+    const [userName, setUserName] = useState("");
+    const [userEmail, setUserEmail] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
-        if (isOpen && clientID) {
-          const client = clients.find((client) => client._id === clientID);
-          if (client) {
-            setClientName(client.name);
-            setClientAge(client.born);
-            setClientEmail(client.email);
+        if (isOpen && userID) {
+          const user = users.find((user) => user._id === userID);
+          if (user) {
+            setUserName(user.name);
+            setUserEmail(user.email);
           }
         }
-      }, [isOpen, clientID, clients]);
+      }, [isOpen, userID, users]);
 
     const handleClose = () => {
-        setClientName("");
-        setClientAge("");
-        setClientEmail("");
+        setUserName("");
+        setUserEmail("");
         setErrorMessage("");
         onClose();
     };
@@ -33,13 +29,11 @@ const EditClientPopUp = ({ isOpen, onClose, onClientAdded, clients, clientID, up
     
         try {
           const updatedData = {
-            name: clientName,
-            born: clientAge,
-            email: clientEmail,
-            purchaseCount: clientPurchases
+            name: userName,
+            email: userEmail,
           };
     
-          await updateClient(clientID, updatedData);
+          await updateUser(userID, updatedData);
           handleClose();
         } catch (error) {
           console.error("Erro ao atualizar cliente:", error.message);
@@ -57,36 +51,17 @@ const EditClientPopUp = ({ isOpen, onClose, onClientAdded, clients, clientID, up
                         <label>Nome:</label>
                         <input
                             type="text"
-                            value={clientName}
-                            onChange={(e) => setClientName(e.target.value)}
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
                             required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Data de Nascimento:</label>
-                        <input
-                            type="date"
-                            value={clientAge}
-                            onChange={(e) => setClientAge(e.target.value)}
-                            required
-                            min="0"
                         />
                     </div>
                     <div className="form-group">
                         <label>E-mail:</label>
                         <input
                             type="email"
-                            value={clientEmail}
-                            onChange={(e) => setClientEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Compras:</label>
-                        <input
-                            type="number"
-                            value={clientPurchases}
-                            onChange={(e) => setClientPurchases(e.target.value)}
+                            value={userEmail}
+                            onChange={(e) => setUserEmail(e.target.value)}
                             required
                         />
                     </div>
@@ -103,4 +78,4 @@ const EditClientPopUp = ({ isOpen, onClose, onClientAdded, clients, clientID, up
     );
 };
 
-export default EditClientPopUp;
+export default EditUserPopUp;

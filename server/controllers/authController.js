@@ -91,6 +91,7 @@ export const loginUser = async (req, res) => {
       login: true,
       name: user.name,
       image: user.image,
+      code: user.code,
       message: "Login realizado com sucesso.",
     });
   } catch (error) {
@@ -163,24 +164,25 @@ export const getAllUsers = async (req, res) => {
 export const getOneUser = async (req, res) => {
   try {
     const { code } = req.params;
-    const user = await User.findById(code);
-
+    const user = await User.findOne({code});
+    
     if (!user) {
       return res.status(404).json({ message: "Usuário não encontrado" });
     }
-
     return res.status(200).json({message: "Usuário encontrado com sucesso", content: user});
+
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao buscar o usuário", error });
+    console.error("Error in getOneUser:", error);
+    return res.status(500).json({ message: "Erro ao buscar o usuário", error: error.message });
   }
 };
 
 export const updateUser = async (req, res) => {
-  const { email } = req.params;
+  const { code } = req.params;
   const { name, newEmail, password, image } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ code });
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado." });

@@ -9,6 +9,8 @@ import EditUserPopUp from "../components/PopUps/EditUserPopUp/EditUserPopUp.jsx"
 import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
 import SearchBar from "../components/SearchBar/SearchBar.jsx";
 import ProfileImageUploader from "../components/ProfileImageUploader/ProfileImageUploader.jsx";
+import { FaRegEdit } from "react-icons/fa";
+import { MdOutlineEdit } from "react-icons/md";
 
 function ViewUsers(refreshTrigger) {
   const [users, setUsers] = useState([]);
@@ -16,9 +18,10 @@ function ViewUsers(refreshTrigger) {
   const [sortBy, setSortBy] = useState("code");
   const [isAscending, setIsAscending] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [userLoggedIn, setUserLoggedIn] = useState();
   const fileInputRef = useRef(null);
-
-  const [imageProfile, SetimageProfile] = useState("");
+  
+  const [imageProfile, setImageProfile] = useState("");
   const [username, setUsername] = useState("");
 
   const [popView, setPopView] = useState("");
@@ -38,7 +41,7 @@ function ViewUsers(refreshTrigger) {
   useEffect(() => {
     const storedImage = localStorage.getItem("profileImage");
     if (storedImage) {
-      SetimageProfile(storedImage);
+      setImageProfile(storedImage);
     }
   }, []);
 
@@ -70,6 +73,21 @@ function ViewUsers(refreshTrigger) {
   useEffect(() => {
   }, [users]);
 
+  useEffect(() => {
+    fetchUserLoggedIn();
+
+    let handler = (e) =>{
+      if (!actionMenuRef.current.contains(e.target)){
+        setOpenMenuId(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handler);
+  }, [refreshTrigger]);
+  
+  useEffect(() => {
+  }, [setUserLoggedIn]);
+
   const handlePopUp = (userID, pop) => {
     setPopView(pop);
     setUserID(userID);
@@ -86,6 +104,21 @@ function ViewUsers(refreshTrigger) {
 
   const openPopUp = () => setPopUpOpen(true);
   const closePopUp = () => setPopUpOpen(false);
+
+  const fetchUserLoggedIn = async () => {
+    try {
+      const code = localStorage.getItem("code");
+      console.log("Procurando usuario com o code:", code);
+      
+      const response = await axios.get(`http://localhost:5000/api/users/listone/${code}`);
+      
+      if (response.data && response.data.content) {
+        setUserLoggedIn(response.data.content);
+      } 
+    } catch (error) {
+      console.error("Erro ao buscar o Usuario:", error);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -121,8 +154,8 @@ function ViewUsers(refreshTrigger) {
     }
   });
   
-  const toggleMenu = (email) => {
-    setOpenMenuId(openMenuId === email ? null : email);
+  const toggleMenu = (id) => {
+    setOpenMenuId(openMenuId === id ? null : id);
   };
 
 
@@ -182,24 +215,24 @@ function ViewUsers(refreshTrigger) {
               <thead>
                 <tr>
                   <th>
-                    
-                  </th>
-                  <th>
                     <span >
                       code 
                     </span>
                   </th>
                   <th>
-                    <span >
+                    
+                  </th>
+                  <th className="text-left">
+                    <span>
                       Nome 
                     </span>
                   </th>
-                  <th>
+                  <th className="text-left">
                     <span>
                       Email
                     </span>
                   </th>
-                  <th>
+                  <th className="text-left">
                     <span>
                       Funcao
                     </span>
@@ -211,12 +244,12 @@ function ViewUsers(refreshTrigger) {
               </thead>
               <tbody>
                 {sortedUsers.map((user) => (
-                  <tr>
-                    <td><img className="icon-list-user" src={user.image ? user.image : DefaultImage} alt="" /></td>
+                  <tr key={user._id}>
                     <td>{user.code ? user.code : ""}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role ? user.role : "Funcionario" }</td>
+                    <td><img className="icon-list-user" src={user.image ? user.image : DefaultImage} alt="" /></td>
+                    <td className="text-left">{user.name}</td>
+                    <td className="text-left">{user.email}</td>
+                    <td className="text-left">{user.role ? user.role : "Funcionario" }</td>
                     <td>
                     <div className="action-menu" ref={actionMenuRef} >
                       <button className="action-btn"  onClick={() => toggleMenu(user._id)}>
@@ -237,25 +270,50 @@ function ViewUsers(refreshTrigger) {
           </div>
         </div>
         <div className="user-perfil-grid">
-          <div className="user-photo-perfil">
             <h3>PERFIL DE USUARIO</h3>
-            <div className="profile-avatar">
-              <ProfileImageUploader
-                imageProfile={imageProfile}
-                SetimageProfile={SetimageProfile}
-                fileInputRef={fileInputRef}
-                modalIsOpen={modalIsOpen}
-                handleOpenModal={handleOpenModal}
-                handleCloseModal={handleCloseModal}
-                />
+            <div className="user-photo-perfil">
+              <div className="profile-avatar">
+                  <ProfileImageUploader
+                      imageProfile={imageProfile}
+                      setImageProfile={setImageProfile}
+                      fileInputRef={fileInputRef}
+                      modalIsOpen={modalIsOpen}
+                      handleOpenModal={handleOpenModal}
+                      handleCloseModal={handleCloseModal}
+                  />
+                  <div className="overlay-profile">
+                      <span className="texto">Alterar foto do perfil</span>
+                  </div>
+              </div>
             </div>
-          </div>
           <div className="user-info-perfil">
-                <ul>
-                  <li><div>nome</div></li>
-                  <li><div>email</div></li>
-                  <li><div>password</div></li>
-                </ul>
+            {userLoggedIn ? (
+              <ul>
+                <label htmlFor="">
+                  nome
+                <li>
+                  <div>{userLoggedIn.name}</div>
+                  <div className="icon"><MdOutlineEdit /></div>
+                </li>
+                </label>
+                <label htmlFor="">
+                  e-mail
+                <li>
+                  <div>{userLoggedIn.email}</div>
+                  <div className="icon"><MdOutlineEdit /></div>
+                  </li>
+                </label>
+                <label htmlFor="">
+                  senha
+                <li>
+                  <div>**************</div>
+                  <div className="icon"><MdOutlineEdit /></div>
+                  </li>
+                </label>
+              </ul>
+            ) : (
+              <div>Nenhum dado de usuário disponível</div>
+            )}
           </div>
         </div>
         <RegisterUserPopUp isOpen={isPopUpOpen && popView === ""} onClose={closePopUp} onClientAdded={refreshTable} />
@@ -264,7 +322,7 @@ function ViewUsers(refreshTrigger) {
         <EditUserPopUp
           isOpen={isPopUpOpen}
           onClose={closePopUp}
-          updateClient={updateUser}
+          updateUser={updateUser}
           user={users}
           userID={userID}
         />
