@@ -27,9 +27,9 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending, refreshTrigger}
     useEffect(() => {
         fetchPromotions();
 
-        let handler = (e) =>{
-            if (!actionMenuRef.current.contains(e.target)){
-                setOpenMenuId(false);
+        const handler = (e) => {
+            if (actionMenuRef.current && !actionMenuRef.current.contains(e.target)) {
+                setOpenMenuId(null);
             }
         };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { ProfileContext } from "../components/ProfileImageUploader/ProfileContext.jsx";
 import Container from "../components/Container/Container.jsx";
 import "./UsersView.css";
@@ -113,16 +113,16 @@ function ViewUsers({ refreshTrigger }) {
     fetchUsers();
   };
 
-  const sortedUsers = users.sort((a, b) => {
-    const aValue = a[sortBy] || "";
-    const bValue = b[sortBy] || "";
-
-    if (isAscending) {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
+  // const sortedUsers = users.sort((a, b) => {
+  //   const aValue = a[sortBy] || "";
+  //   const bValue = b[sortBy] || "";
+  //
+  //   if (isAscending) {
+  //     return aValue > bValue ? 1 : -1;
+  //   } else {
+  //     return aValue < bValue ? 1 : -1;
+  //   }
+  // });
 
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
@@ -151,10 +151,10 @@ function ViewUsers({ refreshTrigger }) {
 
   const deleteUser = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${id}`, {
-        method: "DELETE",
+      const response = await axios.delete(`http://localhost:5000/api/users/deletar/${id}`, {
+        withCredentials: true,
       });
-      if (!response.ok) {
+      if (!response) {
         throw new Error("Falha ao deletar o usuário");
       }
       fetchUsers();
@@ -210,7 +210,7 @@ function ViewUsers({ refreshTrigger }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedUsers.map((user) => (
+                  {users.map((user) => (
                     <tr key={user._id}>
                       <td>{user.code || ""}</td>
                       <td>
@@ -265,11 +265,8 @@ function ViewUsers({ refreshTrigger }) {
                 handleOpenModal={handleOpenModal}
                 handleCloseModal={handleCloseModal}
               />
-              <div className="overlay-profile">
-                <span
-                  className="texto"
-                  onClick={() => fileInputRef.current.click()}
-                >
+              <div className="overlay-profile" onClick={() => fileInputRef.current.click()}>
+                <span className="texto">
                   Alterar foto de perfil
                 </span>
               </div>

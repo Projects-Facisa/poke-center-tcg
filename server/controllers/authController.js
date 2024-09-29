@@ -225,16 +225,16 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  const { code } = req.params;
+  const { id } = req.params;
 
   try {
-    const user = await User.findById({ code });
+    const user = await User.findById({ _id: id });
 
     if (!user) {
       return res.status(404).json({ error: "Usuário não encontrado." });
     }
 
-    await User.findByIdAndDelete({ code });
+    await User.findByIdAndDelete({ _id: id });
 
     res.status(200).json({ message: "Usuário deletado com sucesso." });
   } catch (error) {

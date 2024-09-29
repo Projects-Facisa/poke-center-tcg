@@ -3,7 +3,7 @@ import "./DeletePopUp.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const DeletePopUp = ({ isOpen, onClose, deleteObject, itemID }) => {
+const DeletePopUp = ({ isOpen, onClose, deleteObject, itemID}) => {
   const handleClose = () => {
     onClose();
   };

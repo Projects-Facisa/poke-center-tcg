@@ -8,6 +8,7 @@ import {
   registerFuncionario,
   updateUser,
   getOneUser,
+  deleteUser,
 } from "../controllers/authController.js";
 import { verifyUser } from "../middleware/authMiddleware.js";
 
@@ -17,6 +18,8 @@ router.get("/listall", getAllUsers);
 router.get("/listone/:code", getOneUser);
 
 router.put("/atualizar/:id", updateUser);
+
+router.delete("/deletar/:id", deleteUser)
 
 router.post("/funcionario", registerFuncionario);
 router.post("/register", registerUser);

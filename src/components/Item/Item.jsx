@@ -25,9 +25,9 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
   useEffect(() => {
     fetchItems();
 
-    let handler = (e) =>{
-      if (!actionMenuRef.current.contains(e.target)){
-        setOpenMenuId(false);
+    const handler = (e) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(e.target)) {
+        setOpenMenuId(null);
       }
     };
 
