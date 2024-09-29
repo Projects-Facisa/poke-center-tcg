@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
-import axios from 'axios';
 import "./Charts.css";
 
 const colors = ["#B0B0B0", "#2ECC71", "#3498DB", "#9B59B6", "#F1C40F"];
@@ -21,75 +20,13 @@ function useECharts(option) {
   return chartRef;
 }
 
-const fetchData = async (setData, setLineData) => {
-  try {
-    const response = await axios.get('http://localhost:5000/cards');
-
-    if (Array.isArray(response.data)) {
-      const rarityCounts = {
-        common: 0,
-        uncommon: 0,
-        rare: 0,
-        ultraRare: 0,
-        others: 0,
-      };
-
-      const counts = Array(31).fill(0);
-
-      response.data.forEach(item => {
-        const rarity = item.rarity;
-        if (rarity === "Common") {
-          rarityCounts.common += 1;
-        } else if (rarity === "Uncommon") {
-          rarityCounts.uncommon += 1;
-        } else if (rarity === "Rare") {
-          rarityCounts.rare += 1;
-        } else if (rarity === "Ultra Rare") {
-          rarityCounts.ultraRare += 1;
-        } else {
-          rarityCounts.others += 1;
-        }
-
-        if (item.purchaseDate) {
-          const date = new Date(item.purchaseDate);
-          if (!isNaN(date)) {
-            const day = date.getDate();
-            if (day >= 1 && day <= 31) {
-              counts[day - 1] += 1;
-            }
-          }
-        }
-      });
-
-      setData(rarityCounts);
-      setLineData(prevData => ({
-        ...prevData,
-        series: [{
-          ...prevData.series[0],
-          data: counts,
-        }],
-      }));
-    }
-  } catch (error) {
-    console.error("Erro ao buscar dados:", error);
-  }
-};
-
-export function ColumnChartComponent() {
-  const [data, setData] = useState({
-    common: 0,
-    uncommon: 0,
-    rare: 0,
-    ultraRare: 0,
-    others: 0
-  });
-
+export function ColumnChartComponent({ data }) {
   const seriesData = [
     data.common,
     data.uncommon,
     data.rare,
     data.ultraRare,
-    data.others
+    data.others,
   ].map((value, index) => ({
     value,
     itemStyle: {
@@ -155,54 +92,11 @@ export function ColumnChartComponent() {
 
   const chartRef = useECharts(columnData);
 
-  useEffect(() => {
-    fetchData(setData, () => {});
-  }, []);
-
   return <div ref={chartRef} style={{ height: "400px", width: "100%" }} />;
 }
 
-export function LineChartComponent() {
-  const [lineData, setLineData] = useState({
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "cross",
-      },
-      backgroundColor: "rgba(50, 50, 50, 0.8)",
-      borderColor: "#777",
-      borderWidth: 1,
-      textStyle: {
-        color: "#fff",
-      },
-    },
-    xAxis: {
-      type: "category",
-      data: Array.from({ length: 31 }, (_, i) => (i + 1).toString()),
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        name: "Cartas Registradas",
-        data: Array(31).fill(0),
-        type: "line",
-        smooth: true,
-        symbol: "circle",
-        symbolSize: 8,
-        itemStyle: {
-          color: "#3248DB",
-        },
-      },
-    ],
-  });
-
-  const chartRef = useECharts(lineData);
-
-  useEffect(() => {
-    fetchData(() => {}, setLineData);
-  }, []);
+export function LineChartComponent({ data }) {
+  const chartRef = useECharts(data);
 
   return <div ref={chartRef} style={{ height: "400px", width: "100%" }} />;
 }
