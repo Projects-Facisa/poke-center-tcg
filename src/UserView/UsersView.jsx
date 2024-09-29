@@ -12,6 +12,7 @@ import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
 import SearchBar from "../components/SearchBar/SearchBar.jsx";
 import ProfileImageUploader from "../components/ProfileImageUploader/ProfileImageUploader.jsx";
 import { MdOutlineEdit } from "react-icons/md";
+import { TailSpin } from "react-loader-spinner";
 
 function ViewUsers({ refreshTrigger }) {
   const { imageProfile, updateProfileImage } = useContext(ProfileContext);
@@ -27,6 +28,7 @@ function ViewUsers({ refreshTrigger }) {
     { field: 'password', editing: false },
   ]);
   const fileInputRef = useRef(null);
+  const [loading, setLoading] = useState(true);
 
   const [username, setUsername] = useState("");
 
@@ -149,6 +151,8 @@ function ViewUsers({ refreshTrigger }) {
     } catch (error) {
       console.error("Erro ao buscar os usuários:", error);
       setUsers([]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -194,9 +198,12 @@ function ViewUsers({ refreshTrigger }) {
 
   const deleteUser = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/users/deletar/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axios.delete(
+        `http://localhost:5000/api/users/deletar/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
       if (!response) {
         throw new Error("Falha ao deletar o usuário");
       }
@@ -217,6 +224,26 @@ function ViewUsers({ refreshTrigger }) {
     });
     updateProfileImage(newImage);
   };
+
+  if (loading) {
+    return (
+      <TailSpin
+        visible={true}
+        height="80"
+        width="80"
+        color="black"
+        ariaLabel="tail-spin-loading"
+        radius="1"
+        wrapperStyle={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+        wrapperClass=""
+      />
+    );
+  }
 
   return (
     <Container>
@@ -277,7 +304,10 @@ function ViewUsers({ refreshTrigger }) {
                             <IoIosMore />
                           </button>
                           {openMenuId === user._id && (
-                            <div className="action-dropdown" ref={actionMenuRef}>
+                            <div
+                              className="action-dropdown"
+                              ref={actionMenuRef}
+                            >
                               <button onClick={() => handlePopUp(user._id, 1)}>
                                 Editar
                               </button>
@@ -308,10 +338,11 @@ function ViewUsers({ refreshTrigger }) {
                 handleOpenModal={handleOpenModal}
                 handleCloseModal={handleCloseModal}
               />
-              <div className="overlay-profile" onClick={() => fileInputRef.current.click()}>
-                <span className="texto">
-                  Alterar foto de perfil
-                </span>
+              <div
+                className="overlay-profile"
+                onClick={() => fileInputRef.current.click()}
+              >
+                <span className="texto">Alterar foto de perfil</span>
               </div>
             </div>
           </div>
