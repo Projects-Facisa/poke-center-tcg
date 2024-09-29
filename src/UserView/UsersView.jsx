@@ -234,7 +234,7 @@ function ViewUsers({ refreshTrigger }) {
                             <IoIosMore />
                           </button>
                           {openMenuId === user._id && (
-                            <div className="action-dropdown">
+                            <div className="action-dropdown" ref={actionMenuRef}>
                               <button onClick={() => handlePopUp(user._id, 1)}>
                                 Editar
                               </button>
