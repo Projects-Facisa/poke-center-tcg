@@ -4,6 +4,7 @@ import Container from "../components/Container/Container.jsx";
 import "./UsersView.css";
 import axios from "axios";
 import { IoIosAdd, IoIosMore } from "react-icons/io";
+import { ImCross } from "react-icons/im";
 import DefaultImage from "../assets/user-profile.png";
 import RegisterUserPopUp from "../components/PopUps/RegisterUserPopUp/RegisterUserPopUp.jsx";
 import EditUserPopUp from "../components/PopUps/EditUserPopUp/EditUserPopUp.jsx";
@@ -20,6 +21,11 @@ function ViewUsers({ refreshTrigger }) {
   const [isAscending, setIsAscending] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(null);
+  const [isEditing, setIsEditing] = useState([
+    { field: 'name', editing: false },
+    { field: 'email', editing: false },
+    { field: 'password', editing: false },
+  ]);
   const fileInputRef = useRef(null);
 
   const [username, setUsername] = useState("");
@@ -30,6 +36,43 @@ function ViewUsers({ refreshTrigger }) {
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const actionMenuRef = useRef(null);
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  const handleEditClick = (field) => {
+    setIsEditing((prev) =>
+        prev.map((item) =>
+            item.field === field ? { ...item, editing: true } : item
+        )
+    );
+  };
+
+  const handleCloseClick = (field) => {
+    setIsEditing((prev) =>
+        prev.map((item) =>
+            item.field === field ? { ...item, editing: false } : item
+        )
+    );
+  };
+
+  const handleUpdate = async () => {
+    const updatedData = {
+      name: nameRef.current? nameRef.current.value : userLoggedIn.name,
+      newEmail: emailRef.current ? emailRef.current.value : userLoggedIn.email,
+      password: passwordRef.current ? passwordRef.current.value : userLoggedIn.password,
+    };
+
+    await updateUser(userLoggedIn._id, updatedData)
+    console.log('Atualizando dados do usuário:', updatedData);
+
+    // Definindo todos os campos de isEditing para false
+    setIsEditing((prev) =>
+        prev.map((item) => ({ ...item, editing: false }))
+    );
+
+    await fetchUserLoggedIn();
+  };
 
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
@@ -113,16 +156,16 @@ function ViewUsers({ refreshTrigger }) {
     fetchUsers();
   };
 
-  // const sortedUsers = users.sort((a, b) => {
-  //   const aValue = a[sortBy] || "";
-  //   const bValue = b[sortBy] || "";
-  //
-  //   if (isAscending) {
-  //     return aValue > bValue ? 1 : -1;
-  //   } else {
-  //     return aValue < bValue ? 1 : -1;
-  //   }
-  // });
+  const sortedUsers = users.filter((user) => user._id !== userLoggedIn._id).sort((a, b) => {
+    const aValue = a[sortBy] || "";
+    const bValue = b[sortBy] || "";
+
+    if (isAscending) {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
 
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
@@ -210,7 +253,7 @@ function ViewUsers({ refreshTrigger }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => (
+                  {sortedUsers.map((user) => (
                     <tr key={user._id}>
                       <td>{user.code || ""}</td>
                       <td>
@@ -274,65 +317,67 @@ function ViewUsers({ refreshTrigger }) {
           </div>
           <div className="user-info-perfil">
             {userLoggedIn ? (
-              <ul>
-                <label>
-                  Nome
-                  <li>
-                    <div>{userLoggedIn.name}</div>
-                    <div className="icon">
-                      <MdOutlineEdit />
-                    </div>
-                  </li>
-                </label>
-                <label>
-                  E-mail
-                  <li>
-                    <div>{userLoggedIn.email}</div>
-                    <div className="icon">
-                      <MdOutlineEdit />
-                    </div>
-                  </li>
-                </label>
-                <label>
-                  Senha
-                  <li>
-                    <div>**************</div>
-                    <div className="icon">
-                      <MdOutlineEdit />
-                    </div>
-                  </li>
-                </label>
-              </ul>
+                <ul>
+                  {isEditing.map((item) => (
+                      <label key={item.field}>
+                        {item.field.charAt(0).toUpperCase() + item.field.slice(1)}
+                        <li>
+                          {item.editing ? (
+                              <input
+                                  type={item.field === 'password' ? 'password' : 'text'}
+                                  defaultValue={item.field === 'password' ? "" : userLoggedIn[item.field]}
+                                  ref={item.field === 'name' ? nameRef : item.field === 'email' ? emailRef : passwordRef}
+                              />
+                          ) : (
+                              <div>{item.field === 'password' ? "********" : userLoggedIn[item.field]}</div>
+                          )}
+                          {!item.editing ?
+                              <div className="icon" onClick={() => handleEditClick(item.field)}>
+                                <MdOutlineEdit/>
+                              </div> :
+                              <div className="icon-cross" onClick={() => handleCloseClick(item.field)}>
+                                <ImCross/>
+                              </div>
+                          }
+                        </li>
+                      </label>
+                  ))}
+                  {isEditing.some((item) => item.editing) ?
+                      <button type="submit" onClick={handleUpdate}>ATUALIZAR</button> :
+                      <button>ATUALIZAR</button>
+                  }
+
+                </ul>
             ) : (
-              <div>Nenhum dado de usuário disponível</div>
+                <div>Nenhum dado de usuário disponível</div>
             )}
           </div>
         </div>
 
         {popView === 0 && (
-          <RegisterUserPopUp
-            isOpen={isPopUpOpen}
-            onClose={closePopUp}
-            onUserAdded={refreshTable}
-          />
+            <RegisterUserPopUp
+                isOpen={isPopUpOpen}
+                onClose={closePopUp}
+                onUserAdded={refreshTable}
+            />
         )}
 
         {popView === 1 && (
-          <EditUserPopUp
-            isOpen={isPopUpOpen}
-            onClose={closePopUp}
-            updateUser={updateUser}
-            users={users}
-            userID={userID}
-          />
+            <EditUserPopUp
+                isOpen={isPopUpOpen}
+                onClose={closePopUp}
+                updateUser={updateUser}
+                users={users}
+                userID={userID}
+            />
         )}
         {popView === 2 && (
-          <DeletePopUp
-            isOpen={isPopUpOpen}
-            onClose={closePopUp}
-            deleteObject={deleteUser}
-            itemID={userID}
-          />
+            <DeletePopUp
+                isOpen={isPopUpOpen}
+                onClose={closePopUp}
+                deleteObject={deleteUser}
+                itemID={userID}
+            />
         )}
       </div>
     </Container>

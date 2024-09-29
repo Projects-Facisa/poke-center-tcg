@@ -98,8 +98,8 @@ table .text-left {
     position: relative;
     width: 320px;
     height: 320px;
-    overflow: hidden; 
-    border-radius: 50%; 
+    overflow: hidden;
+    border-radius: 50%;
 }
 
 .profile-avatar img {
@@ -112,8 +112,8 @@ table .text-left {
 .profile-avatar .overlay-profile {
     position: absolute;
     top: 0;
-    left: 0; 
-    right: 0; 
+    left: 0;
+    right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
@@ -121,8 +121,8 @@ table .text-left {
     align-items: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    overflow: visible; 
-    text-align: center; 
+    overflow: visible;
+    text-align: center;
 }
 
 .profile-avatar:hover .overlay-profile {
@@ -132,7 +132,7 @@ table .text-left {
 
 .texto {
     color: white;
-    font-size: 20px; 
+    font-size: 20px;
 }
 
 
@@ -166,7 +166,11 @@ table .text-left {
     padding: 0 10px;
     & .icon {
         font-size: 20pt;
-    }
+    };
+    & .icon-cross {
+        font-size: 15pt;
+        margin-left: 5px;
+    };
 }
 
 .user-perfil-grid {

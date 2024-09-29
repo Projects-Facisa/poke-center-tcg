@@ -66,6 +66,11 @@ function Promotion() {
                 </span>
                         </th>
                         <th>
+                <span onClick={() => handleSort("stock")} className="clickable-text">
+                  Qtd. {renderSortIcon("stock")}
+                </span>
+                        </th>
+                        <th>
                 <span onClick={() => handleSort("clientName")} className="clickable-text">
                   Cliente {renderSortIcon("clientName")}
                 </span>
@@ -84,7 +89,8 @@ function Promotion() {
                     </tr>
                     </thead>
                     <tbody>
-                    <PromotionItem searchFilter={search} sortBy={sortBy} isAscending={isAscending} refreshTrigger={refreshTrigger}/>
+                    <PromotionItem searchFilter={search} sortBy={sortBy} isAscending={isAscending}
+                                   refreshTrigger={refreshTrigger}/>
                     </tbody>
                 </table>
                 <RegisterPromotionPopUp isOpen={isPopUpOpen} onClose={closePopUp} onPromotionRegister={refreshTable}/>

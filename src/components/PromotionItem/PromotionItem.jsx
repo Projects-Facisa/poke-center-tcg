@@ -42,6 +42,7 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending, refreshTrigger}
         try {
             const response = await axios.get("http://localhost:5000/promotions/");
             setPromotions(response.data);
+            console.log(response.data)
         } catch (error) {
             console.error("Error fetching promotions:", error);
         }
@@ -92,13 +93,14 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending, refreshTrigger}
             {filteredPromotions.map((promotion) => (
                 <tr key={promotion._id}>
                     <td>{!promotion.Card ? "Carta não encontrada" : promotion.Card.name}</td>
+                    <td>{!promotion.Card.stock ? 0 : promotion.Card.stock}</td>
                     <td>{!promotion.Client ? "Todos" : promotion.Client.name}</td>
                     <td>{"R$" + promotion.price % 1 === 0 ? promotion.price.toFixed(2) + ",00" : promotion.price.toFixed(2)}</td>
                     <td>{new Date(promotion.expireAt).toLocaleString("pt-BR")}</td>
                     <td>
-                        <div className="action-menu" ref={actionMenuRef} >
-                            <button className="action-btn"  onClick={() => toggleMenu(promotion._id)}>
-                                <IoIosMore />
+                        <div className="action-menu" ref={actionMenuRef}>
+                            <button className="action-btn" onClick={() => toggleMenu(promotion._id)}>
+                                <IoIosMore/>
                             </button>
                             {openMenuId === promotion._id && (
                                 <div className="action-dropdown" ref={actionMenuRef}>

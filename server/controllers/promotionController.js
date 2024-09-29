@@ -18,7 +18,7 @@ export const getAllPromotions = async (req, res) => {
         }
 
         // Retorna as promoções restantes
-        const remainingPromotions = await Promotion.find({}).populate('Card', ["name", "image"]).populate('Client', "name");
+        const remainingPromotions = await Promotion.find({}).populate('Card', ["name", "image", "stock"]).populate('Client', "name");
         return res.status(200).json(remainingPromotions);
     } catch (e) {
         return res.status(500).json({mensage: "erro ao buscar as promos",error: e});
