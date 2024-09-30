@@ -105,10 +105,10 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending, refreshTrigger}
                             {openMenuId === promotion._id && (
                                 <div className="action-dropdown" ref={actionMenuRef}>
                                     <button onClick={() => handlePopUp(promotion, 1)}>
-                                        Edit
+                                        Editar
                                     </button>
                                     <button onClick={() => handlePopUp(promotion, 2)}>
-                                        Delete
+                                        Deletar
                                     </button>
                                 </div>
                             )}

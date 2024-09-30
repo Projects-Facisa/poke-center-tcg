@@ -319,11 +319,11 @@ function ViewUsers() {
                           <div className="action-dropdownn" ref={actionMenuRef}>
                             <button onClick={() => handlePopUp(client._id, 1)}>
                           
-                              Edit
+                              Editar
                             </button>
                             <button onClick={() => handlePopUp(client._id, 2)}>
                               {" "}
-                              Delete{" "}
+                              Deletar{" "}
                             </button>
                             <button id="add-compras" onClick={() => handlePopUp(client._id, 3)}>
                               {" "}

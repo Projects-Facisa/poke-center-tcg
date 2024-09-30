@@ -203,9 +203,9 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
               </button>
               {openMenuId === item._id && (
                 <div className="action-dropdown" ref={actionMenuRef}>
-                  <button onClick={() => handlePopUp(item._id, 1)}>Edit</button>
+                  <button onClick={() => handlePopUp(item._id, 1)}>Editar</button>
                   <button onClick={() => handlePopUp(item._id, 2)}>
-                    Delete
+                    Deletar
                   </button>
                 </div>
               )}
