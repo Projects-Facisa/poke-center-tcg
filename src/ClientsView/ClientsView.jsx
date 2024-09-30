@@ -1,8 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import Container from "../components/Container/Container.jsx";
 import "./ClientsView.css";
 import axios from "axios";
-import { IoIosMore, IoMdArrowDown, IoMdArrowUp, IoIosAdd } from "react-icons/io";
+import {
+  IoIosMore,
+  IoMdArrowDown,
+  IoMdArrowUp,
+  IoIosAdd,
+} from "react-icons/io";
 import { FaUserCheck } from "react-icons/fa6";
 import { SiVerizon } from "react-icons/si";
 import { MdShoppingCart } from "react-icons/md";
@@ -11,6 +16,8 @@ import SearchBar from "../components/SearchBar/SearchBar.jsx";
 import EditClientPopUp from "../components/PopUps/EditClientPopUp/EditClientPopUp.jsx";
 import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/RegisterClientPopUp.jsx";
 import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
+import { LoadingContext } from "../Controller/LoadingContext.jsx";
+import { TailSpin } from "react-loader-spinner";
 
 function ViewUsers() {
   const [clients, setClients] = useState([]);
@@ -18,10 +25,11 @@ function ViewUsers() {
   const [topClients, setTopClients] = useState([]);
   const [sortBy, setSortBy] = useState("code");
   const [isAscending, setIsAscending] = useState(true);
-  
+
   const [popView, setPopView] = useState("");
   const [clientID, setClientID] = useState("");
-  
+  const { loading, loadingIsFalse, loadingIsTrue } = useContext(LoadingContext);
+
   const [openMenuId, setOpenMenuId] = useState(false);
   const actionMenuRef = useRef();
 
@@ -33,7 +41,7 @@ function ViewUsers() {
 
   useEffect(() => {
     fetchClients();
-    
+
     const handler = (e) => {
       if (!actionMenuRef.current.contains(e.target)) {
         setOpenMenuId(false);
@@ -54,7 +62,7 @@ function ViewUsers() {
 
   const getTopClients = (clients) => {
     return clients
-      .filter(client => client && client.purchaseCount > 0)
+      .filter((client) => client && client.purchaseCount > 0)
       .sort((a, b) => b.purchaseCount - a.purchaseCount)
       .slice(0, 5);
   };
@@ -65,8 +73,9 @@ function ViewUsers() {
   }, [clients]);
 
   const fetchClients = async () => {
+    loadingIsTrue();
     try {
-      const response = await axios.get('http://localhost:5000/api/clients');
+      const response = await axios.get("http://localhost:5000/api/clients");
       if (Array.isArray(response.data.content)) {
         setClients(response.data.content);
       } else {
@@ -75,6 +84,8 @@ function ViewUsers() {
     } catch (error) {
       console.error("Erro ao buscar os clientes:", error);
       setClients([]);
+    } finally {
+      loadingIsFalse();
     }
   };
 
@@ -95,8 +106,11 @@ function ViewUsers() {
     const birthDate = new Date(bornDate);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDifference = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
       age--;
     }
     return age;
@@ -169,6 +183,26 @@ function ViewUsers() {
     }
   };
 
+  if (loading) {
+    return (
+      <TailSpin
+        visible={true}
+        height="80"
+        width="80"
+        color="black"
+        ariaLabel="tail-spin-loading"
+        radius="1"
+        wrapperStyle={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+        wrapperClass=""
+      />
+    );
+  }
+
   return (
     <Container>
       <div className="table-header">
@@ -181,10 +215,9 @@ function ViewUsers() {
                 <IoIosAdd />
               </span>
             </button>
-
           </div>
           <div className="table-search-bar">
-          <SearchBar input={"Pesquisar um Cliente..."}/>
+            <SearchBar input={"Pesquisar um Cliente..."} />
           </div>
         </div>
       </div>
@@ -196,21 +229,29 @@ function ViewUsers() {
                 <h4>Clientes cadastrados</h4>
                 <span>{clients.length}</span>
               </div>
-              <div className="icon"><FaUserCheck /></div>
+              <div className="icon">
+                <FaUserCheck />
+              </div>
             </div>
             <div className="infos-box">
               <div className="info">
                 <h4>Clientes ativos</h4>
-                <span>{clients.filter(client => client.purchaseCount).length}</span>
+                <span>
+                  {clients.filter((client) => client.purchaseCount).length}
+                </span>
               </div>
-              <div className="icon ativo"><SiVerizon /></div>
+              <div className="icon ativo">
+                <SiVerizon />
+              </div>
             </div>
             <div className="infos-box">
               <div className="info">
                 <h4>Total de compras</h4>
                 <span>{totalPurchases}</span>
               </div>
-              <div className="icon"><MdShoppingCart /></div>
+              <div className="icon">
+                <MdShoppingCart />
+              </div>
             </div>
           </div>
           <div className="client-grid-body">
@@ -218,23 +259,35 @@ function ViewUsers() {
               <thead>
                 <tr>
                   <th>
-                    <span onClick={() => handleSort("code")} className="clickable-text">
+                    <span
+                      onClick={() => handleSort("code")}
+                      className="clickable-text"
+                    >
                       Code {renderSortIcon("code")}
                     </span>
                   </th>
                   <th>
-                    <span onClick={() => handleSort("name")} className="clickable-text">
+                    <span
+                      onClick={() => handleSort("name")}
+                      className="clickable-text"
+                    >
                       Nome {renderSortIcon("name")}
                     </span>
                   </th>
                   <th>
-                    <span onClick={() => handleSort("born")} className="clickable-text">
+                    <span
+                      onClick={() => handleSort("born")}
+                      className="clickable-text"
+                    >
                       Idade {renderSortIcon("born")}
                     </span>
                   </th>
                   <th>Email</th>
                   <th>
-                    <span onClick={() => handleSort("purchaseCount")} className="clickable-text">
+                    <span
+                      onClick={() => handleSort("purchaseCount")}
+                      className="clickable-text"
+                    >
                       Compras {renderSortIcon("purchaseCount")}
                     </span>
                   </th>
@@ -248,16 +301,27 @@ function ViewUsers() {
                     <td>{client.name}</td>
                     <td>{calcAge(client.born)}</td>
                     <td>{client.email}</td>
-                    <td>{client.purchaseCount > 0 ? client.purchaseCount : 0}</td>
+                    <td>
+                      {client.purchaseCount > 0 ? client.purchaseCount : 0}
+                    </td>
                     <td>
                       <div className="action-menu" ref={actionMenuRef}>
-                        <button className="action-btn" onClick={() => toggleMenu(client._id)}>
+                        <button
+                          className="action-btn"
+                          onClick={() => toggleMenu(client._id)}
+                        >
                           <IoIosMore />
                         </button>
                         {openMenuId === client._id && (
                           <div className="action-dropdown" ref={actionMenuRef}>
-                            <button onClick={() => handlePopUp(client._id, 1)}> Edit </button>
-                            <button onClick={() => handlePopUp(client._id, 2)}> Delete </button>
+                            <button onClick={() => handlePopUp(client._id, 1)}>
+                              {" "}
+                              Edit{" "}
+                            </button>
+                            <button onClick={() => handlePopUp(client._id, 2)}>
+                              {" "}
+                              Delete{" "}
+                            </button>
                           </div>
                         )}
                       </div>
@@ -277,7 +341,7 @@ function ViewUsers() {
                 <div>Nome</div>
                 <div className="purchaseCount">Compras</div>
               </li>
-              {topClients.map(client => (
+              {topClients.map((client) => (
                 <li key={client._id}>
                   <div className="code">{client.code}</div>
                   <div className="name">{client.name}</div>

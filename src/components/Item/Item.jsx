@@ -34,8 +34,6 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
     document.addEventListener("mousedown", handler);
   }, [refreshTrigger]);
 
-
-
   const fetchItems = async () => {
     try {
       const response = await fetch("http://localhost:5000/cards");
@@ -82,31 +80,63 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
   };
 
   const sortByName = () => {
-    setItems([...items].sort((a, b) => (isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))));
+    setItems(
+      [...items].sort((a, b) =>
+        isAscending
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name)
+      )
+    );
   };
 
   const sortByCategory = () => {
-    setItems([...items].sort((a, b) => (isAscending ? a.category.localeCompare(b.category) : b.category.localeCompare(a.category))));
+    setItems(
+      [...items].sort((a, b) =>
+        isAscending
+          ? a.category.localeCompare(b.category)
+          : b.category.localeCompare(a.category)
+      )
+    );
   };
 
   const sortByRarity = () => {
-    setItems([...items].sort((a, b) => (isAscending ? a.rarity.localeCompare(b.rarity) : b.rarity.localeCompare(a.rarity))));
+    setItems(
+      [...items].sort((a, b) =>
+        isAscending
+          ? a.rarity.localeCompare(b.rarity)
+          : b.rarity.localeCompare(a.rarity)
+      )
+    );
   };
 
   const sortByQuantity = () => {
-    setItems([...items].sort((a, b) => (isAscending ? a.stock - b.stock : b.stock - a.stock)));
+    setItems(
+      [...items].sort((a, b) =>
+        isAscending ? a.stock - b.stock : b.stock - a.stock
+      )
+    );
   };
 
   const sortByPrice = () => {
-    setItems([...items].sort((a, b) => (isAscending ? (a.newPrice ? a.newPrice : a.price) - (b.newPrice ? b.newPrice : b.price)  : (b.newPrice ? b.newPrice : b.price) - (a.newPrice ? a.newPrice : a.price))));
+    setItems(
+      [...items].sort((a, b) =>
+        isAscending
+          ? (a.newPrice ? a.newPrice : a.price) -
+            (b.newPrice ? b.newPrice : b.price)
+          : (b.newPrice ? b.newPrice : b.price) -
+            (a.newPrice ? a.newPrice : a.price)
+      )
+    );
   };
 
   const sortByPurchaseDate = () => {
-    setItems([...items].sort((a, b) => {
-      const dateA = new Date(a.purchaseDate.split("/").reverse().join("-"));
-      const dateB = new Date(b.purchaseDate.split("/").reverse().join("-"));
-      return isAscending ? dateA - dateB : dateB - dateA;
-    }));
+    setItems(
+      [...items].sort((a, b) => {
+        const dateA = new Date(a.purchaseDate.split("/").reverse().join("-"));
+        const dateB = new Date(b.purchaseDate.split("/").reverse().join("-"));
+        return isAscending ? dateA - dateB : dateB - dateA;
+      })
+    );
   };
 
   useEffect(() => {
@@ -117,8 +147,6 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
     if (sortBy === "price") sortByPrice();
     if (sortBy === "purchaseDate") sortByPurchaseDate();
   }, [sortBy, isAscending]);
-
-
 
   const filteredItems = items.filter((item) =>
     item.name.toLowerCase().includes(searchFilter.toLowerCase())
@@ -154,19 +182,28 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
             </span>
           </td>
           <td>{item.stock}</td>
-          {item.newPrice ? <td><span className='line-price'>{"R$" + item.price.toFixed(2)}</span>
-            <span className='new-price'>{"R$" + item.newPrice}</span></td> : <td><span>{"R$" + item.price.toFixed(2)}</span></td>}
+          {item.newPrice ? (
+            <td>
+              <span className="line-price">{"R$" + item.price.toFixed(2)}</span>
+              <span className="new-price">{"R$" + item.newPrice}</span>
+            </td>
+          ) : (
+            <td>
+              <span>{"R$" + item.price.toFixed(2)}</span>
+            </td>
+          )}
           <td>{new Date(item.purchaseDate).toLocaleDateString("pt-BR")}</td>
           <td>
-            <div className="action-menu" ref={actionMenuRef} >
-              <button className="action-btn"  onClick={() => toggleMenu(item._id)}>
+            <div className="action-menu" ref={actionMenuRef}>
+              <button
+                className="action-btn"
+                onClick={() => toggleMenu(item._id)}
+              >
                 <IoIosMore />
               </button>
               {openMenuId === item._id && (
                 <div className="action-dropdown" ref={actionMenuRef}>
-                  <button onClick={() => handlePopUp(item._id, 1)}>
-                    Edit
-                  </button>
+                  <button onClick={() => handlePopUp(item._id, 1)}>Edit</button>
                   <button onClick={() => handlePopUp(item._id, 2)}>
                     Delete
                   </button>
@@ -174,7 +211,6 @@ function Item({ searchFilter = "", sortBy, isAscending, refreshTrigger }) {
               )}
             </div>
           </td>
-
         </tr>
       ))}
       {popView === 1 ? (

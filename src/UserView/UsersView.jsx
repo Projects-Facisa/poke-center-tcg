@@ -13,6 +13,7 @@ import SearchBar from "../components/SearchBar/SearchBar.jsx";
 import ProfileImageUploader from "../components/ProfileImageUploader/ProfileImageUploader.jsx";
 import { MdOutlineEdit } from "react-icons/md";
 import { TailSpin } from "react-loader-spinner";
+import { LoadingContext } from "../Controller/LoadingContext.jsx";
 
 function ViewUsers({ refreshTrigger }) {
   const { imageProfile, updateProfileImage } = useContext(ProfileContext);
@@ -23,13 +24,12 @@ function ViewUsers({ refreshTrigger }) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(null);
   const [isEditing, setIsEditing] = useState([
-    { field: 'name', editing: false },
-    { field: 'email', editing: false },
-    { field: 'password', editing: false },
+    { field: "name", editing: false },
+    { field: "email", editing: false },
+    { field: "password", editing: false },
   ]);
   const fileInputRef = useRef(null);
-  const [loading, setLoading] = useState(true);
-
+  const { loading, loadingIsFalse, loadingIsTrue } = useContext(LoadingContext);
   const [username, setUsername] = useState("");
 
   const [popView, setPopView] = useState("");
@@ -44,34 +44,34 @@ function ViewUsers({ refreshTrigger }) {
 
   const handleEditClick = (field) => {
     setIsEditing((prev) =>
-        prev.map((item) =>
-            item.field === field ? { ...item, editing: true } : item
-        )
+      prev.map((item) =>
+        item.field === field ? { ...item, editing: true } : item
+      )
     );
   };
 
   const handleCloseClick = (field) => {
     setIsEditing((prev) =>
-        prev.map((item) =>
-            item.field === field ? { ...item, editing: false } : item
-        )
+      prev.map((item) =>
+        item.field === field ? { ...item, editing: false } : item
+      )
     );
   };
 
   const handleUpdate = async () => {
     const updatedData = {
-      name: nameRef.current? nameRef.current.value : userLoggedIn.name,
+      name: nameRef.current ? nameRef.current.value : userLoggedIn.name,
       newEmail: emailRef.current ? emailRef.current.value : userLoggedIn.email,
-      password: passwordRef.current ? passwordRef.current.value : userLoggedIn.password,
+      password: passwordRef.current
+        ? passwordRef.current.value
+        : userLoggedIn.password,
     };
 
-    await updateUser(userLoggedIn._id, updatedData)
-    console.log('Atualizando dados do usuário:', updatedData);
+    await updateUser(userLoggedIn._id, updatedData);
+    console.log("Atualizando dados do usuário:", updatedData);
 
     // Definindo todos os campos de isEditing para false
-    setIsEditing((prev) =>
-        prev.map((item) => ({ ...item, editing: false }))
-    );
+    setIsEditing((prev) => prev.map((item) => ({ ...item, editing: false })));
 
     await fetchUserLoggedIn();
   };
@@ -139,6 +139,7 @@ function ViewUsers({ refreshTrigger }) {
   };
 
   const fetchUsers = async () => {
+    loadingIsTrue();
     try {
       const response = await axios.get(
         "http://localhost:5000/api/users/listall"
@@ -152,7 +153,7 @@ function ViewUsers({ refreshTrigger }) {
       console.error("Erro ao buscar os usuários:", error);
       setUsers([]);
     } finally {
-      setLoading(false);
+      loadingIsFalse();
     }
   };
 
@@ -160,17 +161,18 @@ function ViewUsers({ refreshTrigger }) {
     fetchUsers();
   };
 
-  const sortedUsers = users.filter((user) => user._id !== userLoggedIn._id).sort((a, b) => {
-    const aValue = a[sortBy] || "";
-    const bValue = b[sortBy] || "";
+  const sortedUsers = users
+    .filter((user) => userLoggedIn && user._id !== userLoggedIn._id)
+    .sort((a, b) => {
+      const aValue = a[sortBy] || "";
+      const bValue = b[sortBy] || "";
 
-    if (isAscending) {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
-
+      if (isAscending) {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -348,67 +350,90 @@ function ViewUsers({ refreshTrigger }) {
           </div>
           <div className="user-info-perfil">
             {userLoggedIn ? (
-                <ul>
-                  {isEditing.map((item) => (
-                      <label key={item.field}>
-                        {item.field.charAt(0).toUpperCase() + item.field.slice(1)}
-                        <li>
-                          {item.editing ? (
-                              <input
-                                  type={item.field === 'password' ? 'password' : 'text'}
-                                  defaultValue={item.field === 'password' ? "" : userLoggedIn[item.field]}
-                                  ref={item.field === 'name' ? nameRef : item.field === 'email' ? emailRef : passwordRef}
-                              />
-                          ) : (
-                              <div>{item.field === 'password' ? "********" : userLoggedIn[item.field]}</div>
-                          )}
-                          {!item.editing ?
-                              <div className="icon" onClick={() => handleEditClick(item.field)}>
-                                <MdOutlineEdit/>
-                              </div> :
-                              <div className="icon-cross" onClick={() => handleCloseClick(item.field)}>
-                                <ImCross/>
-                              </div>
+              <ul>
+                {isEditing.map((item) => (
+                  <label key={item.field}>
+                    {item.field.charAt(0).toUpperCase() + item.field.slice(1)}
+                    <li>
+                      {item.editing ? (
+                        <input
+                          type={item.field === "password" ? "password" : "text"}
+                          defaultValue={
+                            item.field === "password"
+                              ? ""
+                              : userLoggedIn[item.field]
                           }
-                        </li>
-                      </label>
-                  ))}
-                  {isEditing.some((item) => item.editing) ?
-                      <button type="submit" onClick={handleUpdate}>ATUALIZAR</button> :
-                      <button>ATUALIZAR</button>
-                  }
-
-                </ul>
+                          ref={
+                            item.field === "name"
+                              ? nameRef
+                              : item.field === "email"
+                              ? emailRef
+                              : passwordRef
+                          }
+                        />
+                      ) : (
+                        <div>
+                          {item.field === "password"
+                            ? "********"
+                            : userLoggedIn[item.field]}
+                        </div>
+                      )}
+                      {!item.editing ? (
+                        <div
+                          className="icon"
+                          onClick={() => handleEditClick(item.field)}
+                        >
+                          <MdOutlineEdit />
+                        </div>
+                      ) : (
+                        <div
+                          className="icon-cross"
+                          onClick={() => handleCloseClick(item.field)}
+                        >
+                          <ImCross />
+                        </div>
+                      )}
+                    </li>
+                  </label>
+                ))}
+                {isEditing.some((item) => item.editing) ? (
+                  <button type="submit" onClick={handleUpdate}>
+                    ATUALIZAR
+                  </button>
+                ) : (
+                  <button>ATUALIZAR</button>
+                )}
+              </ul>
             ) : (
-                <div>Nenhum dado de usuário disponível</div>
+              <div>Nenhum dado de usuário disponível</div>
             )}
           </div>
         </div>
 
         {popView === 0 && (
-            <RegisterUserPopUp
-                isOpen={isPopUpOpen}
-                onClose={closePopUp}
-                onUserAdded={refreshTable}
-            />
+          <RegisterUserPopUp
+            isOpen={isPopUpOpen}
+            onClose={closePopUp}
+            onUserAdded={refreshTable}
+          />
         )}
 
         {popView === 1 && (
-            <EditUserPopUp
-                isOpen={isPopUpOpen}
-                onClose={closePopUp}
-                updateUser={updateUser}
-                users={users}
-                userID={userID}
-            />
+          <EditUserPopUp
+            isOpen={isPopUpOpen}
+            onClose={closePopUp}
+            updateUser={updateUser}
+            users={users}
+            userID={userID}
+          />
         )}
         {popView === 2 && (
-            <DeletePopUp
-                isOpen={isPopUpOpen}
-                onClose={closePopUp}
-                deleteObject={deleteUser}
-                itemID={userID}
-            />
+          <DeletePopUp
+            isOpen={isPopUpOpen}
+            onClose={closePopUp}
+            deleteObject={deleteUser}
+            itemID={userID}
+          />
         )}
       </div>
     </Container>

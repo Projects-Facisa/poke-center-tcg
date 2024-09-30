@@ -4,6 +4,7 @@ import Controller from "./Controller/Controller.jsx";
 import "./App.css";
 import ProtectedRoute from "./components/protectedRoute/protectedRoute.jsx";
 import { ProfileProvider } from "./components/ProfileImageUploader/ProfileContext.jsx";
+import { LoadingProvider } from "./Controller/LoadingContext.jsx";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -14,7 +15,9 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <ProfileProvider>
-                <Controller />
+                <LoadingProvider>
+                  <Controller />
+                </LoadingProvider>
               </ProfileProvider>
             </ProtectedRoute>
           }

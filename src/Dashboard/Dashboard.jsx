@@ -1,6 +1,6 @@
 import "./Dashboard.css";
 import Container from "../components/Container/Container.jsx";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   ColumnChartComponent,
   LineChartComponent,
@@ -10,6 +10,8 @@ import { TbCards, TbCircleCheck, TbXboxX } from "react-icons/tb";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { RiLineChartLine } from "react-icons/ri";
 import axios from "axios";
+import { LoadingContext } from "../Controller/LoadingContext.jsx";
+import { TailSpin } from "react-loader-spinner";
 
 function Dashboard() {
   const [items, setItems] = useState([]);
@@ -21,6 +23,7 @@ function Dashboard() {
     ultraRare: 0,
     others: 0,
   });
+  const { loading, loadingIsFalse, loadingIsTrue } = useContext(LoadingContext);
   const [lineData, setLineData] = useState({
     tooltip: {
       trigger: "axis",
@@ -59,6 +62,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        loadingIsTrue();
         const itemsResponse = await axios.get("http://localhost:5000/cards");
         const itemsData = itemsResponse.data;
         setItems(itemsData);
@@ -115,11 +119,33 @@ function Dashboard() {
         }));
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
+      } finally {
+        loadingIsFalse();
       }
     };
 
     fetchData();
   }, []);
+
+  if (loading) {
+    return (
+      <TailSpin
+        visible={true}
+        height="80"
+        width="80"
+        color="black"
+        ariaLabel="tail-spin-loading"
+        radius="1"
+        wrapperStyle={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+        wrapperClass=""
+      />
+    );
+  }
 
   return (
     <Container>
