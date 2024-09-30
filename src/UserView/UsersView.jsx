@@ -60,11 +60,11 @@ function ViewUsers({ refreshTrigger }) {
 
   const handleUpdate = async () => {
     const updatedData = {
-      name: nameRef.current ? nameRef.current.value : userLoggedIn.name,
-      newEmail: emailRef.current ? emailRef.current.value : userLoggedIn.email,
+      name: nameRef.current ? nameRef.current.value : null,
+      newEmail: emailRef.current ? emailRef.current.value : null,
       password: passwordRef.current
         ? passwordRef.current.value
-        : userLoggedIn.password,
+        : null,
     };
 
     await updateUser(userLoggedIn._id, updatedData);
@@ -72,7 +72,8 @@ function ViewUsers({ refreshTrigger }) {
 
     // Definindo todos os campos de isEditing para false
     setIsEditing((prev) => prev.map((item) => ({ ...item, editing: false })));
-
+    
+    localStorage.setItem("username", nameRef.current.value);
     await fetchUserLoggedIn();
   };
 
