@@ -23,6 +23,7 @@ function ViewUsers({ refreshTrigger }) {
   const [isAscending, setIsAscending] = useState(true);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [isEditing, setIsEditing] = useState([
     { field: "name", editing: false },
     { field: "email", editing: false },
@@ -34,6 +35,27 @@ function ViewUsers({ refreshTrigger }) {
 
   const [popView, setPopView] = useState("");
   const [userID, setUserID] = useState("");
+
+  const sortedUsers = users
+    .filter((user) => userLoggedIn && user._id !== userLoggedIn._id)
+    .sort((a, b) => {
+      const aValue = a[sortBy] || "";
+      const bValue = b[sortBy] || "";
+
+      if (isAscending) {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+  };
+
+  const filteredUsers = sortedUsers.filter((user) =>
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -162,18 +184,7 @@ function ViewUsers({ refreshTrigger }) {
     fetchUsers();
   };
 
-  const sortedUsers = users
-    .filter((user) => userLoggedIn && user._id !== userLoggedIn._id)
-    .sort((a, b) => {
-      const aValue = a[sortBy] || "";
-      const bValue = b[sortBy] || "";
 
-      if (isAscending) {
-        return aValue > bValue ? 1 : -1;
-      } else {
-        return aValue < bValue ? 1 : -1;
-      }
-    });
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -268,7 +279,7 @@ function ViewUsers({ refreshTrigger }) {
                   </span>
                 </button>
               </div>
-              <SearchBar input={"Pesquisar um funcionário..."} />
+              <SearchBar onSearch={handleSearch} input={"Pesquisar um funcionário..."} />
             </div>
             <div className="user-list-grid-body">
               <table>
@@ -283,7 +294,7 @@ function ViewUsers({ refreshTrigger }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedUsers.map((user) => (
+                  {filteredUsers.map((user) => (
                     <tr key={user._id}>
                       <td>{user.code || ""}</td>
                       <td>

@@ -28,6 +28,7 @@ function ViewUsers() {
   const [topClients, setTopClients] = useState([]);
   const [sortBy, setSortBy] = useState("code");
   const [isAscending, setIsAscending] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [popView, setPopView] = useState("");
   const [clientID, setClientID] = useState("");
@@ -56,6 +57,25 @@ function ViewUsers() {
       document.removeEventListener("mousedown", handler);
     };
   }, []);
+
+  const sortedClients = [...clients].sort((a, b) => {
+    const aValue = a[sortBy] || "";
+    const bValue = b[sortBy] || "";
+
+    if (isAscending) {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  });
+
+  const handleSearch = (value) => {
+    setSearchTerm(value);
+  };
+
+  const filteredClients = sortedClients.filter((client) =>
+    client.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handlePopUp = (clientID, pop) => {
     setPopView(pop);
@@ -139,17 +159,6 @@ function ViewUsers() {
     return null;
   };
 
-  const sortedClients = [...clients].sort((a, b) => {
-    const aValue = a[sortBy] || "";
-    const bValue = b[sortBy] || "";
-
-    if (isAscending) {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
-
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -220,7 +229,7 @@ function ViewUsers() {
             </button>
           </div>
           <div className="table-search-bar">
-            <SearchBar input={"Pesquisar um Cliente..."} />
+          <SearchBar onSearch={handleSearch} input={"Pesquisar um Cliente..."} />
           </div>
         </div>
       </div>
@@ -298,7 +307,7 @@ function ViewUsers() {
                 </tr>
               </thead>
               <tbody>
-                {sortedClients.map((client) => (
+                {filteredClients.map((client) => (
                   <tr key={client._id}>
                     <td>{client.code}</td>
                     <td>{client.name}</td>
