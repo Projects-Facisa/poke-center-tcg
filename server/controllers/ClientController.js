@@ -63,25 +63,23 @@ export const updateClient = async (req, res) => {
         const { id } = req.params;
         const { name, born, purchaseCount } = req.body;
 
-        if (name === undefined || born === undefined) {
-            return res.status(400).json({ error: "Os campos Nome e Data de Nascimento são obrigatórios" });
+        if (name === undefined && born === undefined && purchaseCount === undefined) {
+            return res.status(400).json({ error: "Pelo menos um dos campos Nome, Data de Nascimento ou Compras é obrigatório" });
         }
 
-        const updateData = {
-            name,
-            born,
-        };
+        const updateData = {};
 
-        if (purchaseCount === 0) {
-            updateData.$unset = { purchaseCount };
-        } else {
+        if (name !== undefined) updateData.name = name;
+        if (born !== undefined) updateData.born = born;
+        
+        if (purchaseCount !== undefined) {
             updateData.purchaseCount = purchaseCount;
         }
 
         const updatedClient = await Client.findByIdAndUpdate(
             id,
             updateData,
-            { new: true}
+            { new: true }
         );
 
         if (!updatedClient) {

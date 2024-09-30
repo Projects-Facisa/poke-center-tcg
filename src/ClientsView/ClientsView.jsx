@@ -16,6 +16,9 @@ import SearchBar from "../components/SearchBar/SearchBar.jsx";
 import EditClientPopUp from "../components/PopUps/EditClientPopUp/EditClientPopUp.jsx";
 import RegisterClientPopUp from "../components/PopUps/RegisterClientPopUp/RegisterClientPopUp.jsx";
 import DeletePopUp from "../components/PopUps/DeletePopUp/DeletePopUp.jsx";
+import AddCompras from "../components/PopUps/EditClientPopUp/AddCompras.jsx";
+import RemoveCompras from "../components/PopUps/EditClientPopUp/RemoveCompras.jsx";
+
 import { LoadingContext } from "../Controller/LoadingContext.jsx";
 import { TailSpin } from "react-loader-spinner";
 
@@ -313,14 +316,22 @@ function ViewUsers() {
                           <IoIosMore />
                         </button>
                         {openMenuId === client._id && (
-                          <div className="action-dropdown" ref={actionMenuRef}>
+                          <div className="action-dropdownn" ref={actionMenuRef}>
                             <button onClick={() => handlePopUp(client._id, 1)}>
-                              {" "}
-                              Edit{" "}
+                          
+                              Edit
                             </button>
                             <button onClick={() => handlePopUp(client._id, 2)}>
                               {" "}
                               Delete{" "}
+                            </button>
+                            <button id="add-compras" onClick={() => handlePopUp(client._id, 3)}>
+                              {" "}
+                              Adicionar Compras{" "}
+                            </button>
+                            <button id="remover-compras" onClick={() => handlePopUp(client._id, 4)}>
+                              {" "}
+                              Remover Compras{" "}
                             </button>
                           </div>
                         )}
@@ -375,6 +386,24 @@ function ViewUsers() {
           onClose={closePopUp}
           deleteObject={deleteClient}
           itemID={clientID}
+        />
+      )}
+      {popView === 3 && (
+        <AddCompras
+        isOpen={isPopUpOpen}
+        onClose={closePopUp}
+        updateClient={updateClient}
+        clients={clients}
+        clientID={clientID}
+        />
+      )}
+      {popView === 4 && (
+        <RemoveCompras
+        isOpen={isPopUpOpen}
+        onClose={closePopUp}
+        updateClient={updateClient}
+        clients={clients}
+        clientID={clientID}
         />
       )}
     </Container>

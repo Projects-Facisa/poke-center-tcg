@@ -14,7 +14,6 @@ const EditClientPopUp = ({
   const [clientName, setClientName] = useState("");
   const [clientAge, setClientAge] = useState("");
   const [clientEmail, setClientEmail] = useState("");
-  const [clientPurchases, setClientPurchases] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   const notifySuccess = (message) => toast.success(message);
@@ -26,7 +25,6 @@ const EditClientPopUp = ({
         setClientName(client.name);
         setClientAge(client.born.split("T")[0]);
         setClientEmail(client.email);
-        setClientPurchases(client.purchaseCount || 0);
       }
     }
   }, [isOpen, clientID, clients]);
@@ -46,9 +44,9 @@ const EditClientPopUp = ({
       const updatedData = {
         name: clientName,
         born: clientAge,
-        email: clientEmail,
-        purchaseCount: clientPurchases,
+        email: clientEmail
       };
+      console.log("Dados a serem enviados:", updatedData, clientID); // Verifique os dados aqui
 
       await updateClient(clientID, updatedData);
       notifySuccess("Cliente Atualizado");
@@ -90,15 +88,6 @@ const EditClientPopUp = ({
               type="email"
               value={clientEmail}
               onChange={(e) => setClientEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Compras:</label>
-            <input
-              type="number"
-              value={clientPurchases}
-              onChange={(e) => setClientPurchases(e.target.value)}
               required
             />
           </div>

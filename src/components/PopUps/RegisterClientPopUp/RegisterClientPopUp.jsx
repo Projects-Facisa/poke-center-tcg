@@ -80,7 +80,7 @@ const RegisterClientPopUp = ({ isOpen, onClose, onClientAdded }) => {
                         />
                     </div>
                     <div className="form-group">
-                        <label>Idade:</label>
+                        <label>Data de Nascimento:</label>
                         <input
                             type="date"
                             value={clientAge}
