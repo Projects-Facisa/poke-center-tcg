@@ -10,6 +10,7 @@
 }
 
 .user-list-grid {
+    height: 74.5vh;
     width: 100%;
 }
 
@@ -38,10 +39,10 @@
 .user-list-grid-body {
     background-color: white;
     border: 1px solid rgba(0,0,0,.125);
-    height: 65.5vh;
+    height: 100%;
     overflow: hidden;
     overflow-y: scroll;
-    border-radius: 10px;
+    
 }
 
  tbody tr:hover{
@@ -88,8 +89,8 @@ table .text-left {
 
 .user-photo-perfil {
     position: relative;
-    width: 320px;
-    height: 320px;
+    width: 280px;
+    height: 280px;
     overflow: hidden;
     border-radius: 50%;
 }
@@ -172,10 +173,10 @@ table .text-left {
     align-items: center;
     gap: 20px;
     max-width: 600px;
-    background-color: #f9f9f9;
+    background-color: white;
     padding: 10px 0;
-    border-radius: 15px;
-    height: 100%;
+    border: 1px solid rgba(0,0,0,.125);
+    height: 74.5vh;
 }
 
 .user-perfil-grid h3 {

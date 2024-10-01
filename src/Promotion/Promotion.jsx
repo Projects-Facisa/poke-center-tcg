@@ -52,7 +52,7 @@ function Promotion() {
                     </div>
                     <div className="table-search-bar">
                         {/* <button className="header-btn search-btn">Filtrar</button> */}
-                        <SearchBar onSearch={setSearch}/>
+                        <SearchBar onSearch={setSearch} input={"Pesquisar uma Promoção..."}/>
                     </div>
                 </div>
             </div>

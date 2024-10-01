@@ -262,26 +262,27 @@ function ViewUsers({ refreshTrigger }) {
 
   return (
     <Container>
+
+<div className="table-header">
+        <h1>Funcionarios</h1>
+        <div className="header-end">
+          <div className="table-header-btns">
+            <button className="header-btn" onClick={() => handlePopUp("", 0)}>
+              <p>Cadastrar Funcionário</p>
+              <span>
+                <IoIosAdd />
+              </span>
+            </button>
+          </div>
+          <div className="table-search-bar">
+          <SearchBar onSearch={handleSearch} input={"Pesquisar um Funcionário..."} />
+          </div>
+        </div>
+      </div>
+
       <div className="container-grid">
         {userLoggedIn && userLoggedIn.role === "Admin" && (
           <div className="user-list-grid">
-            <div className="userview-header">
-              <h1>Visualização de Funcionários</h1>
-            </div>
-            <div className="user-list-grid-header">
-              <div className="new-user">
-                <button
-                  className="header-btn"
-                  onClick={() => handlePopUp("", 0)}
-                >
-                  Cadastrar Funcionário
-                  <span>
-                    <IoIosAdd />
-                  </span>
-                </button>
-              </div>
-              <SearchBar onSearch={handleSearch} input={"Pesquisar um funcionário..."} />
-            </div>
             <div className="user-list-grid-body">
               <table>
                 <thead>
@@ -343,7 +344,7 @@ function ViewUsers({ refreshTrigger }) {
         )}
 
         <div className="user-perfil-grid">
-          <h3>PERFIL DE USUÁRIO</h3>
+          <h3>Perfil de Usuário</h3>
           <div className="user-photo-perfil">
             <div className="profile-avatar">
               <ProfileImageUploader

@@ -53,7 +53,7 @@ function Table() {
             {/* <button className="header-btn search-btn">Filtrar</button> */}
             <SearchBar
               onSearch={setSearch}
-              input={"pesquisar pelo nome da card..."}
+              input={"Pesquisar pelo nome da card..."}
             />
           </div>
         </div>

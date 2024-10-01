@@ -1,10 +1,14 @@
 .container-grid{
+    height: 74.5vh;
     display: grid;
     grid-template-columns: 7fr 3fr;
     gap: 15px;
 }
 
 .client-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     width: 100%;
 }
 
@@ -25,8 +29,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
-    height: 100px;
-    margin-bottom: 15px;
+    height: 20%;
 }
 
 .client-grid-body{
@@ -34,7 +37,7 @@
     border: 1px solid rgba(0,0,0,.125);
     overflow: hidden;
     overflow-y: scroll;
-    border-radius: 10px;
+    
         & table {
         width: 100%;
         border-collapse: collapse;
@@ -114,7 +117,7 @@
 .client-grid-body {
     background-color: white;
     border: 1px solid rgba(0,0,0,.125);
-    height: 65.5vh;
+    height: 80%;
     overflow: hidden;
     overflow-y: scroll;
         & table {

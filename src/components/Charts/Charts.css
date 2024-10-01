@@ -1,9 +1,4 @@
-.charts-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1%;
-  align-items: start;
-}
+
 
 .chart {
   flex: 1;
