@@ -84,14 +84,6 @@ table .text-left {
     text-align: left;
 }
 
-.icon-list-user {
-    height: 60px;
-    width: 60px;
-    border-radius: 50%;
-    border: 2px solid #ccc;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
 
 
 .user-photo-perfil {

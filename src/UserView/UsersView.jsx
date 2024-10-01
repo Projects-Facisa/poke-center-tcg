@@ -14,6 +14,7 @@ import ProfileImageUploader from "../components/ProfileImageUploader/ProfileImag
 import { MdOutlineEdit } from "react-icons/md";
 import { TailSpin } from "react-loader-spinner";
 import { LoadingContext } from "../Controller/LoadingContext.jsx";
+import LazyImage from "../components/LazyImage/LazyImage.jsx";
 
 function ViewUsers({ refreshTrigger }) {
   const { imageProfile, updateProfileImage } = useContext(ProfileContext);
@@ -298,11 +299,12 @@ function ViewUsers({ refreshTrigger }) {
                     <tr key={user._id}>
                       <td>{user.code || ""}</td>
                       <td>
-                        <img
-                          className="icon-list-user"
-                          src={user.image || DefaultImage}
-                          alt=""
-                        />
+                      <LazyImage 
+                        className="icon-list-user"
+                        src={user.image || DefaultImage} 
+                        alt={user.name} 
+                        placeholder={DefaultImage}
+                      />
                       </td>
                       <td className="text-left">{user.name}</td>
                       <td className="text-left">{user.email}</td>
