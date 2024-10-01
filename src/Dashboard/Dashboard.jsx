@@ -96,15 +96,25 @@ function Dashboard() {
             rarityCounts.others += 1;
           }
 
+          const currentDate = new Date();
+          const currentMonth = currentDate.getMonth();
+          const currentYear = currentDate.getFullYear(); 
+          
           if (item.purchaseDate) {
             const date = new Date(item.purchaseDate);
             if (!isNaN(date)) {
               const day = date.getDate();
-              if (day >= 1 && day <= 31) {
-                counts[day - 1] += 1;
+              const month = date.getMonth();
+              const year = date.getFullYear();
+          
+              if (month === currentMonth && year === currentYear) {
+                if (day >= 1 && day <= 31) {
+                  counts[day - 1] += 1;
+                }
               }
             }
           }
+          
         });
 
         setChartData(rarityCounts);
