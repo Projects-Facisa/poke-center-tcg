@@ -4,7 +4,7 @@ import { getAllClients, getOneClient, addClient, updateClient, deleteClient } fr
 const router = express.Router();
 
 router.get("/api/clients", getAllClients);
-router.get("/api/clients/:code", getOneClient);
+router.get("/api/client/:id", getOneClient);
 router.post("/add-client", addClient);
 router.put("/api/clients/:id", updateClient)
 router.delete("/api/clients/:id", deleteClient)

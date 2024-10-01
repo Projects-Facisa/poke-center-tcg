@@ -17,10 +17,10 @@ const RegisterPromotionPopUp = ({
   const [cards, setCards] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] =
-    useState(0);
-
+  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] = useState(0);
+  const [clients, setClients] = useState([]);
   const cardsContainerRef = useRef(null);
+  const [typeClient, setTypeClient] = useState(null);
   const notifySuccess = (message) => toast.success(message);
 
   const handleClose = () => {
@@ -30,8 +30,53 @@ const RegisterPromotionPopUp = ({
     setExpireDate("");
     setCards([]);
     setErrorMessage("");
+    setTypeClient(null);
     onClose();
   };
+
+  const calculateDiscountedPrice = (client, originalPrice) => {
+    let discountPercentage = 0;
+
+    if (client.purchaseCount >= 30) {
+      discountPercentage = 0.30;
+    } else if (client.purchaseCount >= 20) {
+      discountPercentage = 0.20;
+    } else if (client.purchaseCount >= 10) {
+      discountPercentage = 0.10;
+    } else {
+      discountPercentage = 0.05;
+    }
+
+    const discountAmount = originalPrice * discountPercentage;
+    return (originalPrice - discountAmount).toFixed(2);
+  };
+
+  const setPromotion = async () => {
+    if (!selectedCard) {
+      setErrorMessage("Por favor, selecione uma carta.");
+      return;
+    }
+
+    if (typeClient) {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/client/${typeClient}`);
+        const client = response.data.content;
+        const discountedPrice = calculateDiscountedPrice(client, selectedCard.price);
+        setProductPrice(discountedPrice);
+      } catch (error) {
+        console.error("Erro ao buscar o cliente:", error);
+        setErrorMessage("Erro ao buscar o cliente.");
+      }
+    } else {
+      setProductPrice(selectedCard.price);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCard && typeClient !== undefined) {
+      setPromotion();
+    }
+  }, [selectedCard, typeClient]);
 
   const handleSubmit = async () => {
     if (!selectedCard) {
@@ -39,51 +84,37 @@ const RegisterPromotionPopUp = ({
       return;
     }
 
-    if (!productPrice || productPrice >= selectedCard.price) {
+    if (!typeClient && (!productPrice || parseFloat(productPrice) >= selectedCard.price)) {
       setErrorMessage("Por favor, insira um preço menor do que o atual");
       return;
     }
 
-    if (new Date(expireDate).getTime() <= new Date(Date.now()).getTime()) {
-      setErrorMessage("Por favor, insira uma data Válida");
+    if (new Date(expireDate).getTime() <= new Date().getTime()) {
+      setErrorMessage("Por favor, insira uma data válida");
       return;
     }
 
-    if (!itemID) {
-      try {
-        // Enviar os dados completos para o backend
-        const response = await axios.post("http://localhost:5000/promotions", {
-          cardId: selectedCard._id,
-          price: productPrice,
-          expireAt: expireDate,
-        });
+    try {
+      const promotionData = {
+        cardId: selectedCard._id,
+        clientId: typeClient || null,
+        price: productPrice,
+        expireAt: expireDate,
+      };
 
+      if (!itemID) {
+        await axios.post("http://localhost:5000/promotions", promotionData);
         notifySuccess("Promoção adicionada");
-        onPromotionRegister();
-        handleClose();
-      } catch (error) {
-        console.error("Erro ao atualizar promoção:", error);
-        setErrorMessage(error.response.data.error);
-      }
-    } else {
-      try {
-        const response = await axios.put(
-          "http://localhost:5000/promotions/" + itemID,
-          {
-            cardId: selectedCard._id,
-            price: productPrice,
-            expireAt: expireDate,
-          }
-        );
-
+      } else {
+        await axios.put(`http://localhost:5000/promotions/${itemID}`, promotionData);
         notifySuccess("Promoção Atualizada");
-
-        handleClose();
-      } catch (error) {
-        console.error("Erro ao atualizar promoção:", error);
-        setErrorMessage(error.response.data.error);
       }
+      handleClose();
+    } catch (error) {
+      console.error("Erro ao processar promoção:", error);
+      setErrorMessage(error.response?.data?.error || "Erro ao processar promoção");
     }
+    onPromotionRegister();
   };
 
   const handleSearchCard = async (e) => {
@@ -97,31 +128,6 @@ const RegisterPromotionPopUp = ({
       }
     }
   };
-
-  // const handleSearchClient = async (e) => {
-  //     if (e.key === "Enter") {
-  //         const searchInput = e.target.value.trim();
-  //         setErrorMessage("");
-  //         setCards([]);
-  //
-  //         if (!searchInput) {
-  //             setErrorMessage("Por favor, digite um nome para pesquisar.");
-  //             return;
-  //         }
-  //
-  //         try {
-  //             const response = await axios.get("http://localhost:5000/client/name/" + searchInput)
-  //
-  //             if (response.data.length === 0) {
-  //                 setErrorMessage("Nenhum cliente encontrado.");
-  //             } else {
-  //                 setClients(response.data);
-  //             }
-  //         } catch (error) {
-  //             setErrorMessage(error.message);
-  //         }
-  //     }
-  // }
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -138,7 +144,7 @@ const RegisterPromotionPopUp = ({
         const tamanhoImgCard = 150 * 200.52; //Tamanho do card da imagem
 
         let tamanhoPlaceHolderContainerr =
-          tamanhoCardContainer / tamanhoImgCard; //Quantiade de cards que cabem dentro da div pai
+          tamanhoCardContainer / tamanhoImgCard; //Quantidade de cards que cabem dentro da div pai
 
         setTamanhoPlaceHolderContainer(tamanhoPlaceHolderContainerr); //Setando quantidade no state
       }
@@ -149,6 +155,7 @@ const RegisterPromotionPopUp = ({
 
   useEffect(() => {
     fetchCards();
+    fetchClients();
     if (itemID) {
       getPromotionInfos(itemID);
       handleSearchCard("Enter");
@@ -167,6 +174,20 @@ const RegisterPromotionPopUp = ({
     }
   };
 
+  const fetchClients = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/clients");
+      if (Array.isArray(response.data.content)) {
+        setClients(response.data.content);
+      } else {
+        setClients([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar os clientes:", error);
+      setClients([]);
+    }
+  };
+
   const getPromotionInfos = async (itemID) => {
     try {
       const responsePromotion = await axios.get(
@@ -181,6 +202,7 @@ const RegisterPromotionPopUp = ({
       setExpireDate(
         new Date(responsePromotion.data.expireAt).toISOString().split("T")[0]
       );
+      setTypeClient(responsePromotion.data.clientId);
     } catch (error) {
       console.error({ error: error });
     }
@@ -198,36 +220,41 @@ const RegisterPromotionPopUp = ({
     <div className="popup-overlay">
       <div className="popup-content register">
         <IoClose className="x-close" onClick={handleClose} />
-        {/*Botão de fechar*/}
-
         <div className="popup-body">
           <div className="form-section">
             <h2>{!itemID ? "Registrar Promoção" : "Atualizar Promoção"}</h2>
             <form>
               <div className="form-group">
                 <div className="input-label">
+                  <label>Para quem:</label>
+                  <select
+                    name="clients"
+                    id="clients"
+                    value={typeClient || "Todos"}
+                    onChange={(e) => setTypeClient(e.target.value === "Todos" ? null : e.target.value)}
+                  >
+                    <option value="Todos">Todos</option>
+                    {clients.map((client) => (
+                      <option key={client._id} value={client._id}>{client.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="input-label">
                   <label>Nome da Carta:</label>
                   <input
                     type="text"
                     id="search-input"
-                    onKeyDown={handleSearchCard}
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearchCard(e)}
                     placeholder="para pesquisar aperte Enter"
                   />
                 </div>
-                {/*input-label*/}
 
-                {/*<div className="input-label">*/}
-                {/*    <label>Nome do Cliente:</label>*/}
-                {/*    <input*/}
-                {/*        type="text"*/}
-                {/*        id="search-input"*/}
-                {/*        onKeyDown={handleSearchClient}*/}
-                {/*        placeholder="Digite o nome do cliente e aperte Enter"*/}
-                {/*    />*/}
-                {/*</div>/!*input-label*!/*/}
 
                 <div className="input-label">
-                  <label>Preço do Produto:</label>
+                  <label>Preço da Promoção:</label>
                   <input
                     type="number"
                     value={productPrice}
@@ -235,46 +262,39 @@ const RegisterPromotionPopUp = ({
                     required
                   />
                 </div>
-                {/*input-label*/}
 
                 <div className="input-label">
                   <label>Data de Expiração:</label>
                   <input
-                    type="Date"
+                    type="date"
                     value={expireDate}
                     onChange={(e) => setExpireDate(e.target.value)}
                     required
                   />
                 </div>
-                {/*input-label*/}
 
                 <div className="button-group">
-                  {" "}
                   <button
                     id="searchButton"
                     type="button"
                     onClick={handleSubmit}
                   >
-                    Registrar
-                  </button>{" "}
+                    {!itemID ? "Registrar" : "Atualizar"}
+                  </button>
                 </div>
-              </div>{" "}
-              {/*form-group*/}
+              </div>
               {errorMessage && (
                 <div className="error-message">{errorMessage}</div>
               )}
-              {/*FeedBack*/}
             </form>
           </div>
-          {/*form-section*/}
 
           <div className="cards-section" ref={cardsContainerRef}>
             <div className="cards-container">
               {filteredCards.length === 0
-                ? /*If Ternário ===>>> PlaceHolder*/
-                  Array.from({
+                ? Array.from({
                     length: parseInt(tamanhoPlaceHolderContainer / 1.5),
-                  }).map((index) => (
+                  }).map((_, index) => (
                     <div key={index} className="card placeholder">
                       <img
                         src="../src/assets/placeholder.png"
@@ -283,8 +303,7 @@ const RegisterPromotionPopUp = ({
                       />
                     </div>
                   ))
-                : /*Else do If Ternário ===>>> Cartas*/
-                  filteredCards.map((card) => (
+                : filteredCards.map((card) => (
                     <div
                       key={card.id}
                       className={`card ${
@@ -304,7 +323,7 @@ const RegisterPromotionPopUp = ({
                       <h2>{card.name}</h2>
                       <span>ID: {card.id}</span>
                       <br />
-                      <p className="value" > 
+                      <p className="value">
                         {`R$ 
                         ${card.price % 1 === 0 ? card.price + ",00" : card.price}`}
                       </p>
