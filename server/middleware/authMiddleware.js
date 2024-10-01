@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 
 export const verifyUser = (req, res, next) => {
   const accessToken = req.cookies.accessToken;
-  console.log("Verificando token de acesso:", req.cookies.accessToken);
 
   if (!accessToken) {
     return res

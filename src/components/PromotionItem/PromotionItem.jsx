@@ -4,7 +4,6 @@ import { IoIosMore } from "react-icons/io";
 import DeletePopUp from "../PopUps/DeletePopUp/DeletePopUp.jsx";
 import axios from "axios";
 import RegisterPromotionPopUp from "../PopUps/Promotion/RegisterPromotionPopUp/Register.jsx";
-import dayjs from "dayjs";
 
 function PromotionItem({
   searchFilter = "",
@@ -167,28 +166,27 @@ function PromotionItem({
                   : promotion.price.toFixed(2))}
           </td>
           <td>{new Date(promotion.expireAt).toLocaleString("pt-BR")}</td>
-          <td>
-            {!promotion._id.startsWith("birthday-") && (
-              <div className="action-menu" ref={actionMenuRef}>
+            <td>
+            <div className="action-menu" ref={actionMenuRef}>
                 <button
-                  className="action-btn"
-                  onClick={() => toggleMenu(promotion._id)}
+                className={`action-btn ${promotion._id.startsWith("birthday-") ? "action-btn-disabled" : ""}`}
+                onClick={promotion._id.startsWith("birthday-") ? undefined : () => toggleMenu(promotion._id)}
+                aria-label={promotion._id.startsWith("birthday-") ? "Birthday promotion - no actions available" : "Open action menu"}
                 >
-                  <IoIosMore />
+                <IoIosMore />
                 </button>
-                {openMenuId === promotion._id && (
-                  <div className="action-dropdown" ref={actionMenuRef}>
+                {!promotion._id.startsWith("birthday-") && openMenuId === promotion._id && (
+                <div className="action-dropdown" ref={actionMenuRef}>
                     <button onClick={() => handlePopUp(promotion, 1)}>
-                      Editar
+                    Editar
                     </button>
                     <button onClick={() => handlePopUp(promotion, 2)}>
-                      Deletar
+                    Deletar
                     </button>
-                  </div>
+                </div>
                 )}
-              </div>
-            )}
-          </td>
+            </div>
+            </td>
         </tr>
       ))}
       {popView === 1 ? (
