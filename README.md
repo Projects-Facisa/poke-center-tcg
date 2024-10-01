@@ -14,7 +14,7 @@ Desenvolver uma plataforma de comércio eletrônico especializada na compra e ve
 
 ## Finalidade
 
-Criar um ambiente confiável e seguro para transações de cartas TCG de Pokémon.
+Criar um ambiente confiável e seguro para transações de cartas TCG de Pokémon. 
 Oferecer funcionalidades que melhorem a experiência do usuário, como recomendações de cartas, filtros avançados e um sistema de carrinho de compras eficiente.
 Permitir que usuários gerenciem suas coleções e encontrem facilmente as cartas que desejam adquirir ou vender.
 
