@@ -299,12 +299,12 @@ function ViewUsers({ refreshTrigger }) {
                     <tr key={user._id}>
                       <td>{user.code || ""}</td>
                       <td>
-                      <LazyImage 
-                        className="icon-list-user"
-                        src={user.image || DefaultImage} 
-                        alt={user.name} 
-                        placeholder={DefaultImage}
-                      />
+                        <LazyImage 
+                          className="icon-list-user"
+                          src={user.image || DefaultImage} 
+                          alt={user.name} 
+                          placeholder={DefaultImage}
+                        />
                       </td>
                       <td className="text-left">{user.name}</td>
                       <td className="text-left">{user.email}</td>

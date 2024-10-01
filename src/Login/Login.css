@@ -20,15 +20,10 @@
   margin: 10px 0 20px;
 }
 
-.login-page span {
-  font-size: 12px;
-}
 
 .login-page a {
   color: #333;
-  font-size: 14px;
   text-decoration: none;
-  margin: 15px 0;
 }
 
 .login-page button {
@@ -223,4 +218,9 @@
   height: 40px;
   width: 40px;
   font-size: 40px;
+}
+
+
+.form-github {
+  padding: 8px;
 }

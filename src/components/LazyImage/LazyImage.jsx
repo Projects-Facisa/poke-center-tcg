@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import "./LazyImage.css"
+import DefaultImage from "../../assets/placeholder.png";
 
 const LazyImage = ({ src, alt, placeholder }) => {
-  const [imageSrc, setImageSrc] = useState(placeholder || 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
+  const [imageSrc, setImageSrc] = useState(placeholder || DefaultImage);
   const [imageRef, setImageRef] = useState();
 
   useEffect(() => {

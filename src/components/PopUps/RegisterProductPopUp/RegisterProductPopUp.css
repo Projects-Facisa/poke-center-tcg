@@ -189,3 +189,7 @@ button[type="button"]:hover {
   background-color: #ffccc8;
   color: #f44336;
 }
+
+.card span {
+  font-size: 15px;
+}

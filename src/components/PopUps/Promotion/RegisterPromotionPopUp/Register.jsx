@@ -302,10 +302,11 @@ const RegisterPromotionPopUp = ({
                         className="card-image"
                       />
                       <h2>{card.name}</h2>
-                      <p>ID: {card.id}</p>
-                      <p>
-                        PREÇO: R$
-                        {card.price % 1 === 0 ? card.price + ",00" : card.price}
+                      <span>ID: {card.id}</span>
+                      <br />
+                      <p className="value" > 
+                        {`R$ 
+                        ${card.price % 1 === 0 ? card.price + ",00" : card.price}`}
                       </p>
                     </div>
                   ))}

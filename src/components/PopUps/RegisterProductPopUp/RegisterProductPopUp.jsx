@@ -257,7 +257,7 @@ const RegisterProductPopUp = ({ isOpen, onClose, onProductAdded }) => {
                         className="card-image"
                       />
                       <h2>{card.name}</h2>
-                      <p>ID: {card.id}</p>
+                      <span>ID: {card.id}</span>
                     </div>
                   ))}
             </div>

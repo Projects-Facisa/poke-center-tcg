@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./Login.css";
 import loginBackground from "../assets/login-background.mp4";
 import { useNavigate } from "react-router-dom";
-import { FaGithub, FaGoogle, FaFacebook } from "react-icons/fa";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GitHubProfileCard from "../components/GithubProfiles/GithubProfiles";
 
 const LoginComponent = () => {
   const [isSignUpMode, setIsSignUpMode] = useState(false);
@@ -15,8 +15,20 @@ const LoginComponent = () => {
   const regexEmail = /^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/;
   const navigate = useNavigate();
 
+
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+
+
+  const profiles = [
+    { userName: "Severino Neto", avatarUrl: "https://avatars.githubusercontent.com/u/136730703?v=4", gitHubUrl: "https://github.com/svneto" },
+    { userName: "Yuri Diego", avatarUrl: "https://avatars.githubusercontent.com/u/136770806?v=4", gitHubUrl: "https://github.com/Yuri-Diego" },
+    { userName: "Caio Medeiros", avatarUrl: "https://avatars.githubusercontent.com/u/132417760?v=4", gitHubUrl: "https://github.com/medeiroscaio" },
+    { userName: "Silas Miguel", avatarUrl: "https://avatars.githubusercontent.com/u/129446558?v=4", gitHubUrl: "https://github.com/SilasMiguel" },
+    { userName: "Marcleidson Fernandes", avatarUrl: "https://avatars.githubusercontent.com/u/131935886?v=4", gitHubUrl: "https://github.com/marclod" },
+    { userName: "Murilo Alves", avatarUrl: "https://avatars.githubusercontent.com/u/136763427?v=4", gitHubUrl: "https://github.com/medeiroscaio" },
+  ];
+
 
   axios.defaults.withCredentials = true;
   useEffect(() => {
@@ -146,68 +158,25 @@ const LoginComponent = () => {
           Seu navegador não suporta a tag de vídeo.
         </video>
         <div className="form-container sign-up-container">
-          <form onSubmit={handleRegister}>
-            <h1>Criar Conta</h1>
-            <div className="social-container">
-              <a href="#" className="social">
-                <FaGithub />
-              </a>
-              <a href="#" className="social">
-                <FaGoogle />
-              </a>
-              <a href="#" className="social">
-                <FaFacebook />
-              </a>
-            </div>
-            <span>ou use seu email para se registrar</span>
-            <input
-              type="text"
-              placeholder="Nome"
-              value={name.value}
-              onChange={(e) => {
-                handleNameChange(e);
-              }}
-            />
-            {loginValidate(name)}
-            <input
-              type="email"
-              value={email.value}
-              onChange={(e) => {
-                handleEmailChange(e);
-              }}
-              placeholder="Email"
-            />
-            {loginValidate(email, "email")}
-            <input
-              type="password"
-              value={password.value}
-              onChange={(e) => {
-                {
-                  handlePasswordChange(e);
-                }
-              }}
-              placeholder="Senha"
-            />
-            {loginValidate(password)}
-            <button type="submit">Criar Conta</button>
-          </form>
+        <form className="form-github">
+          <div className="github-profiles-container">
+            <h2>Nosso Time</h2>
+            {profiles.map((profile, index) => (
+                <GitHubProfileCard
+                  key={index}
+                  avatarUrl={profile.avatarUrl}
+                  userName={profile.userName}
+                  gitHubUrl={profile.gitHubUrl}
+                />
+              ))} 
+          </div>
+        </form>
         </div>
 
         <div className="form-container sign-in-container">
           <form onSubmit={handleLogin}>
             <h1>Entrar</h1>
-            <div className="social-container">
-              <a href="#" className="social">
-                <FaGithub />
-              </a>
-              <a href="#" className="social">
-                <FaGoogle />
-              </a>
-              <a href="#" className="social">
-                <FaFacebook />
-              </a>
-            </div>
-            <span>ou use sua conta</span>
+            <span>Insira suas credenciais.</span>
             <input
               type="email"
               value={email.value}
@@ -226,7 +195,6 @@ const LoginComponent = () => {
               placeholder="Senha"
             />
             {loginValidate(password)}
-            <a href="#">Esqueceu sua senha?</a>
             <button type="submit">Entrar</button>
           </form>
         </div>
@@ -234,24 +202,23 @@ const LoginComponent = () => {
         <div className="overlay-container">
           <div className="overlay">
             <div className="overlay-panel overlay-left">
-              <h1>Bem-vindo de volta!</h1>
+              <h1>Sobre nós!</h1>
               <p>
-                Para se manter conectado conosco, faça login com suas
-                informações pessoais
+                Somos uma equipe de desenvolvedores dedicados à tecnologia e ao código aberto. Conheça nossos perfis no GitHub:
               </p>
               <button
                 className="ghost"
                 id="signIn"
                 onClick={() => {
-                  setIsSignUpMode(false), resetFields();
+                  setIsSignUpMode(false);
                 }}
               >
-                Entrar
+                voltar
               </button>
             </div>
             <div className="overlay-panel overlay-right">
               <h1>Olá, Amigo!</h1>
-              <p>Insira seus dados pessoais e comece sua jornada conosco</p>
+              <p>Insira suas Credenciais para logar em nosso sistema.</p>
               <button
                 className="ghost"
                 id="signUp"
@@ -259,7 +226,7 @@ const LoginComponent = () => {
                   setIsSignUpMode(true), resetFields();
                 }}
               >
-                Criar Conta
+                Sobre Nós
               </button>
             </div>
           </div>
