@@ -17,7 +17,8 @@ const RegisterPromotionPopUp = ({
   const [cards, setCards] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] = useState(0);
+  const [tamanhoPlaceHolderContainer, setTamanhoPlaceHolderContainer] =
+    useState(0);
   const [clients, setClients] = useState([]);
   const cardsContainerRef = useRef(null);
   const [typeClient, setTypeClient] = useState(null);
@@ -38,11 +39,11 @@ const RegisterPromotionPopUp = ({
     let discountPercentage = 0;
 
     if (client.purchaseCount >= 30) {
-      discountPercentage = 0.30;
+      discountPercentage = 0.3;
     } else if (client.purchaseCount >= 20) {
-      discountPercentage = 0.20;
+      discountPercentage = 0.2;
     } else if (client.purchaseCount >= 10) {
-      discountPercentage = 0.10;
+      discountPercentage = 0.1;
     } else {
       discountPercentage = 0.05;
     }
@@ -59,9 +60,14 @@ const RegisterPromotionPopUp = ({
 
     if (typeClient) {
       try {
-        const response = await axios.get(`http://localhost:5000/api/client/${typeClient}`);
+        const response = await axios.get(
+          `http://localhost:5000/api/client/${typeClient}`
+        );
         const client = response.data.content;
-        const discountedPrice = calculateDiscountedPrice(client, selectedCard.price);
+        const discountedPrice = calculateDiscountedPrice(
+          client,
+          selectedCard.price
+        );
         setProductPrice(discountedPrice);
       } catch (error) {
         console.error("Erro ao buscar o cliente:", error);
@@ -84,7 +90,10 @@ const RegisterPromotionPopUp = ({
       return;
     }
 
-    if (!typeClient && (!productPrice || parseFloat(productPrice) >= selectedCard.price)) {
+    if (
+      !typeClient &&
+      (!productPrice || parseFloat(productPrice) >= selectedCard.price)
+    ) {
       setErrorMessage("Por favor, insira um preço menor do que o atual");
       return;
     }
@@ -106,13 +115,18 @@ const RegisterPromotionPopUp = ({
         await axios.post("http://localhost:5000/promotions", promotionData);
         notifySuccess("Promoção adicionada");
       } else {
-        await axios.put(`http://localhost:5000/promotions/${itemID}`, promotionData);
+        await axios.put(
+          `http://localhost:5000/promotions/${itemID}`,
+          promotionData
+        );
         notifySuccess("Promoção Atualizada");
       }
       handleClose();
     } catch (error) {
       console.error("Erro ao processar promoção:", error);
-      setErrorMessage(error.response?.data?.error || "Erro ao processar promoção");
+      setErrorMessage(
+        error.response?.data?.error || "Erro ao processar promoção"
+      );
     }
     onPromotionRegister();
   };
@@ -231,11 +245,17 @@ const RegisterPromotionPopUp = ({
                     name="clients"
                     id="clients"
                     value={typeClient || "Todos"}
-                    onChange={(e) => setTypeClient(e.target.value === "Todos" ? null : e.target.value)}
+                    onChange={(e) =>
+                      setTypeClient(
+                        e.target.value === "Todos" ? null : e.target.value
+                      )
+                    }
                   >
                     <option value="Todos">Todos</option>
                     {clients.map((client) => (
-                      <option key={client._id} value={client._id}>{client.name}</option>
+                      <option key={client._id} value={client._id}>
+                        {client.name}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -251,7 +271,6 @@ const RegisterPromotionPopUp = ({
                     placeholder="para pesquisar aperte Enter"
                   />
                 </div>
-
 
                 <div className="input-label">
                   <label>Preço da Promoção:</label>
@@ -325,7 +344,9 @@ const RegisterPromotionPopUp = ({
                       <br />
                       <p className="value">
                         {`R$ 
-                        ${card.price % 1 === 0 ? card.price + ",00" : card.price}`}
+                        ${
+                          card.price % 1 === 0 ? card.price + ",00" : card.price
+                        }`}
                       </p>
                     </div>
                   ))}
