@@ -14,13 +14,17 @@ export const getAllClients = async (req, res) => {
 }
 
 export const getOneClient = async (req, res) => {
-    try{
-        const result = await Client.findById({code: req.params.code} )
-        res.status(200).json({message: "Cliente encontrado com sucesso.", content: result})
-    }catch(error) {
-        res.status(404).json({message: "Nenhum Cliente encontrado."})
+    try {
+        const result = await Client.findById(req.params.id); // Altere 'code' para 'id'
+        if (!result) {
+            return res.status(404).json({ message: "Nenhum Cliente encontrado." });
+        }
+        res.status(200).json({ message: "Cliente encontrado com sucesso.", content: result });
+    } catch (error) {
+        res.status(500).json({ message: "Erro inesperado." });
     }
 }
+
 
 export const addClient = async (req, res) => {
     const { name, born ,email, purchaseCount } = req.body;
