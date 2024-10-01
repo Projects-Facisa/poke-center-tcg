@@ -58,7 +58,13 @@ function PromotionItem({ searchFilter = "", sortBy, isAscending, refreshTrigger}
     }
 
     const sortByName = () => {
-        setPromotions([...promotions].sort((a, b) => (isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))));
+        setPromotions([...promotions].sort((a, b) => {
+            const nameA = a.Card?.name || "";
+            const nameB = b.Card?.name || "";
+            return isAscending 
+                ? nameA.localeCompare(nameB) 
+                : nameB.localeCompare(nameA);
+        }));
     };
 
     const sortByPrice = () => {
