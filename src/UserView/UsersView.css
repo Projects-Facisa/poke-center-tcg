@@ -2,11 +2,16 @@
     margin-bottom: 25px;
 }
 
-.container-grid{
+.container-grid {
     min-height: 700px;
     display: grid;
     grid-template-columns: 7fr 3fr;
     gap: 15px;
+}
+
+.admin-content {
+    display: flex;
+    flex-direction: column;
 }
 
 .user-list-grid {
@@ -14,19 +19,23 @@
     width: 100%;
 }
 
-.new-user{
+.new-user {
     width: 100%;
 }
 
-.user-list-grid-header{
+.table-header {
     display: flex;
     justify-content: space-between;
-    gap: 15px;
+    align-items: center;
     margin-bottom: 15px;
 }
 
+.header-end {
+    display: flex;
+    gap: 15px;
+}
 
-.user-list-grid-body th span{
+.user-list-grid-body th span {
     color: #333;
     font-weight: 600;
 }
@@ -42,28 +51,27 @@
     height: 100%;
     overflow: hidden;
     overflow-y: scroll;
-    
 }
 
- tbody tr:hover{
+tbody tr:hover {
     background-color: #0000000b;
 }
 
- table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
 .user-list-grid-body::-webkit-scrollbar,
 .item-table::-webkit-scrollbar,
-.client-grid-body::-webkit-scrollbar{
+.client-grid-body::-webkit-scrollbar {
     width: 0.5rem;
     height: 0.5rem;
 }
 
 .user-list-grid-body::-webkit-scrollbar-thumb,
 .item-table::-webkit-scrollbar-thumb,
-.client-grid-body::-webkit-scrollbar-thumb{
+.client-grid-body::-webkit-scrollbar-thumb {
     border-radius: 0.5rem;
     background-color: #dad8db;
     visibility: hidden;
@@ -71,12 +79,11 @@
 
 .user-list-grid-body:hover::-webkit-scrollbar-thumb,
 .item-table:hover::-webkit-scrollbar-thumb,
-.client-grid-body:hover::-webkit-scrollbar-thumb{
+.client-grid-body:hover::-webkit-scrollbar-thumb {
     visibility: visible;
 }
 
-
-table td{
+table td {
     padding: 8px;
     text-align: center;
 }
@@ -84,8 +91,6 @@ table td{
 table .text-left {
     text-align: left;
 }
-
-
 
 .user-photo-perfil {
     position: relative;
@@ -128,14 +133,13 @@ table .text-left {
     font-size: 20px;
 }
 
-
 .user-info-perfil {
     align-self: flex-start;
     padding: 0 20px;
     width: 100%;
 }
 
-.user-info-perfil label{
+.user-info-perfil label {
     font-size: 10pt;
     color: #555;
 }
@@ -157,14 +161,16 @@ table .text-left {
     align-items: center;
     width: 100%;
     padding: 0 10px;
-    & .icon {
-        font-size: 20pt;
-        cursor: pointer;
-    };
-    & .icon-cross {
-        font-size: 15pt;
-        margin-left: 5px;
-    };
+}
+
+.user-info-perfil li .icon {
+    font-size: 20pt;
+    cursor: pointer;
+}
+
+.user-info-perfil li .icon-cross {
+    font-size: 15pt;
+    margin-left: 5px;
 }
 
 .user-perfil-grid {
@@ -191,4 +197,15 @@ table .text-left {
     border: 1px solid #ccc;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .container-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .user-perfil-grid {
+        max-width: 100%;
+    }
 }

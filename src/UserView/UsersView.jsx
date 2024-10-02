@@ -262,26 +262,25 @@ function ViewUsers({ refreshTrigger }) {
 
   return (
     <Container>
-
-<div className="table-header">
-        <h1>Funcionarios</h1>
-        <div className="header-end">
-          <div className="table-header-btns">
-            <button className="header-btn" onClick={() => handlePopUp("", 0)}>
-              <p>Cadastrar Funcionário</p>
-              <span>
-                <IoIosAdd />
-              </span>
-            </button>
-          </div>
-          <div className="table-search-bar">
-          <SearchBar onSearch={handleSearch} input={"Pesquisar um Funcionário..."} />
+        <div className="container-grid">
+        {userLoggedIn && userLoggedIn.role === "Admin" && (
+          <div className="admin-content">
+          <div className="table-header">
+          <h1>Funcionarios</h1>
+          <div className="header-end">
+            <div className="table-header-btns">
+              <button className="header-btn" onClick={() => handlePopUp("", 0)}>
+                <p>Cadastrar Funcionário</p>
+                <span>
+                  <IoIosAdd />
+                </span>
+              </button>
+            </div>
+            <div className="table-search-bar">
+            <SearchBar onSearch={handleSearch} input={"Pesquisar um Funcionário..."} />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="container-grid">
-        {userLoggedIn && userLoggedIn.role === "Admin" && (
           <div className="user-list-grid">
             <div className="user-list-grid-body">
               <table>
@@ -340,6 +339,7 @@ function ViewUsers({ refreshTrigger }) {
                 </tbody>
               </table>
             </div>
+          </div>
           </div>
         )}
 
@@ -424,6 +424,7 @@ function ViewUsers({ refreshTrigger }) {
             )}
           </div>
         </div>
+        </div>
 
         {popView === 0 && (
           <RegisterUserPopUp
@@ -450,8 +451,9 @@ function ViewUsers({ refreshTrigger }) {
             itemID={userID}
           />
         )}
-      </div>
+        
     </Container>
+    
   );
 }
 
